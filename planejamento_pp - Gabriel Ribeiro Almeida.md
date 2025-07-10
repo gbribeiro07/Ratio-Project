@@ -10,19 +10,19 @@
 
 ## 🗓️ MAIO – Planejamento e Início do Back-end
 
-- [ ] Criar repositório GitHub e organizar README inicial
-- [ ] Estruturar diretórios do projeto
-- [ ] Estruturar um mapa do projeto
-- [ ] Criar banco de dados
-- [ ] Criar as entidades e conexão com o banco
+- [x] Criar repositório GitHub e organizar README inicial
+- [x] Estruturar diretórios do projeto
+- [x] Estruturar um mapa do projeto
+- [x] Criar banco de dados
+- [x] Criar as entidades e conexão com o banco
 
 ---
 
 ## 🗓️ JUNHO – Desenvolvimento do Back-end e dos mini-jogos
 
-- [ ] Começar a desenvolver o CRUD das funções básicas da aplicação: login, cadastro, comentar e responder
-- [ ] Iniciar adição de autenticação, middlewares e mais proteções aos dados do usuário
-- [ ] Fazer o planejamento dos mini-jogos
+- [x] Começar a desenvolver o CRUD das funções básicas da aplicação: login, cadastro, comentar e responder
+- [x] Iniciar adição de autenticação, middlewares e mais proteções aos dados do usuário
+- [x] Fazer o planejamento dos mini-jogos
 
 ---
 
