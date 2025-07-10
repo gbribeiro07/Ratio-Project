@@ -45,7 +45,7 @@ CREATE TABLE Collections (
 
 CREATE TABLE Collection_Items (
     idCollectionItem INT AUTO_INCREMENT PRIMARY KEY,
-    idCollection INT NOT NULL,  -- A qual coleção pertence
+    idCollection INT NOT NULL,
     idContent INT NOT NULL,  -- Qual conteúdo foi adicionado
     dateAdded DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (idCollection) REFERENCES Collections(idCollection),
