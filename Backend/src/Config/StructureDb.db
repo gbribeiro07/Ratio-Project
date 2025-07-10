@@ -52,26 +52,6 @@ CREATE TABLE Collection_Items (
     FOREIGN KEY (idContent) REFERENCES Contents(idContent)
 );
 
-CREATE TABLE Comments (
-    idComment INT AUTO_INCREMENT PRIMARY KEY,
-    idUser INT NOT NULL,  -- Quem fez o comentário
-    idContent INT NOT NULL,
-    description TEXT NOT NULL,  -- Corpo do comentário
-    dateCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idUser) REFERENCES User(idUser) ON DELETE CASCADE,
-    FOREIGN KEY (idContent) REFERENCES Contents(idContent) ON DELETE CASCADE
-);
-
-CREATE TABLE Replies (
-    idReply INT AUTO_INCREMENT PRIMARY KEY,
-    idComment INT NOT NULL,  -- Qual comentário está sendo respondido
-    idUser INT NOT NULL,  -- Qual usuário respondeu
-    response TEXT NOT NULL,  -- Texto da resposta
-    dateCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idComment) REFERENCES Comments(idComment) ON DELETE CASCADE,
-    FOREIGN KEY (idUser) REFERENCES User(idUser) ON DELETE CASCADE
-);
-
 CREATE TABLE Questions (
     idQuestion INT AUTO_INCREMENT PRIMARY KEY,
     idUser INT NOT NULL,  -- Quem fez a pergunta
