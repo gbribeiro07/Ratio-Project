@@ -14,6 +14,16 @@ CREATE TABLE User (
     verificationToken VARCHAR (6)
 );
 
+CREATE TABLE Profiles (
+    idProfile INT AUTO_INCREMENT PRIMARY KEY,
+    idUser INT NOT NULL, 
+    nameProfile VARCHAR(100) NOT NULL, 
+    age INT,  -- opcional
+    avatar TEXT,  -- imagem de perfil, se desejar
+    dateCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (idUser) REFERENCES User(idUser)
+);
+
 CREATE TABLE Contents (
     idContent INT AUTO_INCREMENT PRIMARY KEY,
     idUser INT NOT NULL,

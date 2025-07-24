@@ -1,6 +1,7 @@
 const User = require("../Models/User.Model");
 const nodemailer = require("nodemailer");
-const otpGenerator = reuquire("otp-generator");
+const otpGenerator = require("otp-generator");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 const Transporter = nodemailer.createTransport({
@@ -14,7 +15,8 @@ const Transporter = nodemailer.createTransport({
 const UserController = {
   //Cadastrar usuário
   async Register(req, res) {
-    if (!nameUser.trim() || !email.trim() || !password.trim()) {
+    const { nameUser, email, password } = req.body;
+    if (!nameUser?.trim() || !email?.trim() || !password?.trim()) {
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
@@ -28,19 +30,30 @@ const UserController = {
         specialChars: false,
       }); // gera um código numérico de 6 dígitos para verificar o usuário
 
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "Usuário já cadastrado com este email!",
+        });
+      } //verifica se já existe um usuário cadastrado com o email informado
+
+      const hashedPassword = await bcrypt.hash(password, 10); //faz o hash da senha informada pelo usuário para armazenar de forma segura
+
       const newUser = await User.create({
         nameUser,
         email,
-        password,
+        password: hashedPassword,
         isVerified: false,
-        verificationToken: VerificationCode, //salva o código gerado no banco
+        verificationToken: VerificationCode,
       });
+      //cria um novo usuário com os dados informados, incluindo o código de verificação
 
       await Transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: email,
         subject: "Código de verificação",
-        html: `<p>Seu código de verificação é: <strong>${verificationCode}</strong></p>`,
+        html: `<p>Seu código de verificação é: <strong>${VerificationCode}</strong></p>`,
       }); //envia o código de verificação por email
 
       return res.status(201).json({
@@ -85,6 +98,60 @@ const UserController = {
       return res.status(500).json({
         success: false,
         message: "Erro ao verificar Email!",
+        error: err.message,
+      });
+    }
+  },
+
+  //Login do usuário
+  async Login(req, res) {
+    const { email, password } = req.body;
+
+    if (!email.trim() || !password.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Todos os campos são obrigatórios!",
+      });
+    }
+
+    try {
+      const user = await User.findOne({ where: { email } });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "Usuário não encontrado!",
+        });
+      }
+
+      if (!user.isVerified) {
+        return res.status(403).json({
+          success: false,
+          message: "Email não verificado!",
+        });
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: "Senha incorreta!",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Login realizado com sucesso!",
+        data: {
+          id: user.id,
+          nameUser: user.nameUser,
+          email: user.email,
+        },
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao realizar login",
         error: err.message,
       });
     }
