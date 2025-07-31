@@ -2,6 +2,7 @@ const User = require("../Models/User.Model");
 const nodemailer = require("nodemailer");
 const otpGenerator = require("otp-generator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const Transporter = nodemailer.createTransport({
