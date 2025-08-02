@@ -1,13 +1,12 @@
 const User = require("../Models/User.Model");
-const nodemailer = require("nodemailer");
-const otpGenerator = require("otp-generator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const AuthController = {
+  //Atualizar access token
   async refreshAccessToken(req, res) {
-    const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
       return res
@@ -19,7 +18,7 @@ const AuthController = {
       const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
       const newAccessToken = jwt.sign(
-        { id: decoded.id },
+        { id: decoded.id, email: decoded.email, nameUser: decoded.nameUser },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRATION }
       );
@@ -92,11 +91,18 @@ const AuthController = {
         { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
       );
 
+      // Define o refreshToken em um cookie HTTP-only seguro
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true, // garante envio apenas por HTTPS
+        sameSite: "Strict", // evita envio entre domínios
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+      });
+
       return res.status(200).json({
         success: true,
         message: "Login realizado com sucesso!",
         accessToken,
-        refreshToken,
       });
     } catch (err) {
       return res.status(500).json({
@@ -105,6 +111,20 @@ const AuthController = {
         error: err.message,
       });
     }
+  },
+
+  //Logout
+  async Logout(res) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logout realizado com sucesso!",
+    });
   },
 };
 

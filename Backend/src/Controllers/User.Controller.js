@@ -103,6 +103,32 @@ const UserController = {
       });
     }
   },
+
+  async getUserBasics(req, res) {
+    try {
+      const user = await User.findByPk(req.user.id, {
+        attributes: ["id", "nameUser", "email", "image_profile"],
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "Usuário não encontrado!",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: user,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao buscar dados do usuário!",
+        error: err.message,
+      });
+    }
+  },
 };
 
 module.exports = UserController;

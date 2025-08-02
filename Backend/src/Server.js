@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
-const port = process.env.port || 3001; //garante que o servirdor, independente do ambiente, sempre tenha uma porta válida para rodar.
+const port = process.env.port || 3001;
 const sequelize = require("./Config/Db");
+const cookieParser = require("cookie-parser");
 
 app.use(
   cors({
@@ -21,3 +22,5 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" })); //permite que o 
 app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);
 });
+
+app.use(cookieParser());
