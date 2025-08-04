@@ -114,7 +114,7 @@ const AuthController = {
   },
 
   //Logout
-  async Logout(res) {
+  async Logout(_, res) {
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: true,
