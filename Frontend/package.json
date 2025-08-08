@@ -2,7 +2,7 @@
   "name": "ratio",
   "private": true,
   "version": "0.0.0",
-  "author": "Gabriel Ribeiro Almeida",
+  "author": "Gabriel Almeida",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "dotenv": "^17.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.3",

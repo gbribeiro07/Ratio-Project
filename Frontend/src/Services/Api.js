@@ -1,4 +1,4 @@
-const RATIO_API_URL = import.meta.env.API_URL;
+const RATIO_API_URL = import.meta.env.VITE_API_URL;
 
 // Função para cadastrar um usuário
 export async function registerUser(nameUser, email, password) {
