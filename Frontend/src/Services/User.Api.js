@@ -12,3 +12,14 @@ export async function registerUser(nameUser, email, password) {
 
   return response.json();
 }
+
+// Verificação do código enviado por e-mail
+export async function verifyEmailUser(email, VerificationCode) {
+  const response = await fetch(`${RATIO_API_URL}/VerificarEmail`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, VerificationCode }),
+  });
+
+  return response.json();
+}

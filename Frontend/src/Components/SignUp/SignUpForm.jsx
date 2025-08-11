@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { registerUser } from "../../Services/User.Api";
+import { verifyEmailUser } from "../../Services/User.Api";
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
   background-color: #3a322d;
   padding: 70px;
   border-radius: 10px;
@@ -71,23 +74,235 @@ const BackLink = styled(Link)`
   }
 `;
 
+const ModalFundo = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escurecido */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ModalConteúdo = styled.div`
+  background-color: #dcdcdc;
+  width: 75vw;
+  height: 85vh;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 40px 70px;
+  position: relative;
+
+  @media (max-width: 1800px) {
+    width: 70vw;
+    height: 82vh;
+  }
+`;
+
+const TítuloModal = styled.h2`
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  vertical-align: top;
+  margin-bottom: 30px;
+
+  @media (max-width: 1225px) {
+    font-size: 22px;
+  }
+
+  @media (max-width: 980px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 810px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 740px) {
+    font-size: 17px;
+  }
+
+  @media (max-width: 490px) {
+    font-size: 12px;
+  }
+`;
+
+const CodeSubButton = styled.button`
+  margin-top: 20px;
+  display: block;
+  width: 250px;
+  height: 40px;
+  margin-top: 5vh;
+  margin-left: 25vw;
+  padding: 10px;
+  background-color: #00cc66;
+  color: white;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #00994d;
+  }
+
+  @media (max-width: 1800px) {
+    margin-top: 2vh;
+    margin-left: 23vw;
+  }
+
+  @media (max-width: 1225px) {
+    margin-left: 15vw;
+    width: 230px;
+    height: 38px;
+    font-size: 15px;
+  }
+
+  @media (max-width: 980px) {
+    margin-left: 10vw;
+    width: 220px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 810px) {
+    margin-left: 7vw;
+    width: 210px;
+    height: 35px;
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 740px) {
+    margin-left: 4vw;
+    width: 200px;
+    height: 34px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 490px) {
+    margin-left: 2vw;
+    width: 160px;
+    height: 25px;
+    font-size: 9px;
+  }
+`;
+
 export default function SignUpForm() {
+  //estados para armazenar os valores dos Inputs
+  const [modalAberto, setModalAberto] = useState(false);
+  const [nameUser, setNameUser] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [message, setMessage] = useState("");
+
+  //isso será chamado assim que o formulário for enviado
+  const handleSubmit = async (event) => {
+    event.preventDefault(); //evita que a página recarregue
+
+    if (!nameUser || !email || !password) {
+      setMessage("Preencha todos os campos!");
+      return;
+    }
+
+    try {
+      const response = await registerUser(nameUser, email, password, false);
+
+      if (response.error) {
+        setMessage(`Erro: ${response.error}`);
+      } else {
+        setMessage("Código de verificação enviado para o seu email.");
+        setModalAberto(true);
+      }
+    } catch (error) {
+      console.error("Erro ao cadastrar usuário:", error);
+      setMessage("Erro ao cadastrar usuário.");
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode) {
+      setMessage("Digite o código de verificação!");
+      return;
+    }
+
+    try {
+      const response = await verifyEmailUser(email, verificationCode);
+
+      if (response.success) {
+        setMessage("Cadastro concluído com sucesso!");
+        setModalAberto(false);
+        setNameUser("");
+        setEmail("");
+        setPassword("");
+      } else {
+        setMessage("Código inválido!");
+      }
+    } catch (error) {
+      console.error("Erro ao verificar código:", error);
+      setMessage("Erro ao verificar código.");
+    }
+  };
+
   return (
-    <FormContainer>
-      <Title>CADASTRO</Title>
-      <form>
-        <Label>Nome (completo):</Label>
-        <Input type="text" placeholder="Digite seu nome" />
+    <>
+      <FormContainer onSubmit={handleSubmit}>
+        <Title>CADASTRO</Title>
+        <Label>Nome:</Label>
+        <Input
+          type="text"
+          placeholder="Digite seu nome"
+          value={nameUser}
+          onChange={(e) => setNameUser(e.target.value)}
+        />
 
         <Label>E-mail:</Label>
-        <Input type="email" placeholder="Digite seu e-mail" />
+        <Input
+          type="email"
+          placeholder="Digite seu e-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
         <Label>Senha:</Label>
-        <Input type="password" placeholder="Digite sua senha" />
+        <Input
+          type="password"
+          placeholder="Crie uma senha"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-        <SubmitButton>Cadastrar-se</SubmitButton>
-      </form>
-      <BackLink to="/Presentation">Voltar</BackLink>
-    </FormContainer>
+        <SubmitButton type="submit">Cadastrar-se</SubmitButton>
+        <BackLink to="/Presentation">Voltar</BackLink>
+      </FormContainer>
+
+      {modalAberto && (
+        <ModalFundo>
+          <ModalConteúdo>
+            <TítuloModal>Digite o código de verificação</TítuloModal>
+            <Input
+              type="text"
+              placeholder="Código enviado ao seu e-mail"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+            />
+            <CodeSubButton onClick={handleVerifyCode}>
+              Confirmar Código
+            </CodeSubButton>
+          </ModalConteúdo>
+        </ModalFundo>
+      )}
+      {message && (
+        <p style={{ color: "white", textAlign: "center", marginTop: "20px" }}>
+          {message}
+        </p>
+      )}
+    </>
   );
 }
