@@ -18,7 +18,7 @@ const AuthController = {
       const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
       // Opcional: checar se o usuário ainda existe no banco
-      const user = await User.findOne({ where: { id: decoded.id } });
+      const user = await User.findOne({ where: { id: decoded.idUser } });
       if (!user) {
         return res
           .status(401)
@@ -27,7 +27,7 @@ const AuthController = {
 
       // Gera novo access token
       const newAccessToken = jwt.sign(
-        { id: user.id, email: user.email, nameUser: user.nameUser },
+        { id: user.idUser, email: user.email, nameUser: user.nameUser },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRATION }
       );
@@ -82,9 +82,10 @@ const AuthController = {
 
       const accessToken = jwt.sign(
         {
-          id: user.id,
+          id: user.idUser,
           email: user.email,
           nameUser: user.nameUser,
+          path: "/",
         },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRATION }
@@ -92,9 +93,10 @@ const AuthController = {
 
       const refreshToken = jwt.sign(
         {
-          id: user.id,
+          id: user.idUser,
           email: user.email,
           nameUser: user.nameUser,
+          path: "/",
         },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: process.env.JWT_REFRESH_EXPIRATION }

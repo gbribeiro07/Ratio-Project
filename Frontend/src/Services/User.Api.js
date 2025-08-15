@@ -32,3 +32,29 @@ export async function verifyEmailUser(email, VerificationCode) {
 
   return response.json();
 }
+
+// Verificação do código enviado por e-mail
+export async function getUser() {
+  try {
+    const response = await fetch(`${RATIO_API_URL}/UserBasics`, {
+      method: "GET",
+      credentials: "include",
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error("Sessão expirada. Faça login novamente.");
+      } else if (response.status === 404) {
+        throw new Error(data.message || "Usuário não encontrado!");
+      } else {
+        throw new Error(data.message || "Erro no servidor.");
+      }
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    throw new Error(error.message || "Não foi possível conectar ao servidor");
+  }
+}

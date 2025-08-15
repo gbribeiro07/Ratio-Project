@@ -135,9 +135,11 @@ const UserController = {
   },
 
   async getUserBasics(req, res) {
+    console.log("Buscando usuário com ID:", req.user?.id);
     try {
-      const user = await User.findByPk(req.user.id, {
-        attributes: ["id", "nameUser", "email", "image_profile"],
+      const user = await User.findOne({
+        where: { idUser: req.user.id },
+        attributes: ["idUser", "nameUser", "email", "image_profile"],
       });
 
       if (!user) {
