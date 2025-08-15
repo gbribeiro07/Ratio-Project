@@ -2,20 +2,32 @@ const User = require("../Models/User.Model");
 const nodemailer = require("nodemailer");
 const otpGenerator = require("otp-generator");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const Transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: process.env.EMAIL_USER,
+    user: process.env.EMAIL_SUPPORT,
     pass: process.env.EMAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+// Teste de conexão SMTP
+Transporter.verify(function (error, success) {
+  if (error) {
+    console.error("Erro SMTP:", error);
+  } else {
+    console.log("Servidor SMTP pronto");
+  }
 });
 
 const UserController = {
   //Cadastrar usuário
   async Register(req, res) {
+    console.log("Dados recebidos:", req.body);
     const { nameUser, email, password } = req.body;
     if (!nameUser?.trim() || !email?.trim() || !password?.trim()) {
       return res.status(400).json({
@@ -29,17 +41,32 @@ const UserController = {
         digits: true,
         upperCaseAlphabets: false,
         specialChars: false,
-      }); // gera um código numérico de 6 dígitos para verificar o usuário
+      });
 
-      const existingUser = await User.findOne({ where: { email } });
-      if (existingUser) {
+      // Verifica se já existe um usuário VERIFICADO com este email
+      const verifiedUser = await User.findOne({
+        where: {
+          email,
+          isVerified: true,
+        },
+      });
+
+      if (verifiedUser) {
         return res.status(400).json({
           success: false,
           message: "Usuário já cadastrado com este email!",
         });
-      } //verifica se já existe um usuário cadastrado com o email informado
+      }
 
-      const hashedPassword = await bcrypt.hash(password, 10); //faz o hash da senha informada pelo usuário para armazenar de forma segura
+      // Remove registros não verificados anteriores do mesmo email
+      await User.destroy({
+        where: {
+          email,
+          isVerified: false,
+        },
+      });
+
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       const newUser = await User.create({
         nameUser,
@@ -48,24 +75,29 @@ const UserController = {
         isVerified: false,
         verificationToken: VerificationCode,
       });
-      //cria um novo usuário com os dados informados, incluindo o código de verificação
 
       await Transporter.sendMail({
-        from: process.env.EMAIL_USER,
+        from: process.env.EMAIL_SUPPORT,
         to: email,
         subject: "Código de verificação",
-        html: `<p>Seu código de verificação é: <strong>${VerificationCode}</strong></p>`,
-      }); //envia o código de verificação por email
+        html: `<h1>Bem-vindo a Ratio!</h1>
+        <p>Para prosseguir com o cadastro da sua nova conta, verifique o seu e-mail utilizando o código de 6 dígitos abaixo:</p>
+        <h2 style="color:blue;">${VerificationCode}</h2>
+        <p>Obs.: se você não fez esta requisição, ignore este e-mail.</p>`,
+      });
 
       return res.status(201).json({
         success: true,
-        message: "Cadastro realizado! Verifique seu Email para ativar a conta.",
-        data: newUser,
+        message:
+          "Código de verificação enviado! Verifique seu Email para completar o cadastro.",
+        data: {
+          email: newUser.email, // Retorna apenas o email por segurança
+        },
       });
     } catch (err) {
       return res.status(500).json({
         success: false,
-        message: "Erro ao cadastrar",
+        message: "Erro ao processar cadastro",
         error: err.message,
       });
     }
@@ -84,9 +116,7 @@ const UserController = {
         return res
           .status(400)
           .json({ success: false, message: "Código inválido!" });
-      } //se a const user (que está acima) for falsa ou nula, retorna erro com a menssagem "Código inválido"
-
-      //Atualiza o status para verificado e remove o código
+      }
       user.isVerified = true;
       user.verificationToken = null;
       await user.save();

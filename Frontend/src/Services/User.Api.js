@@ -2,20 +2,29 @@ const RATIO_API_URL = import.meta.env.VITE_API_URL;
 
 // Função para cadastrar um usuário
 export async function registerUser(nameUser, email, password) {
-  const response = await fetch(`${RATIO_API_URL}/Cadastro`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ nameUser, email, password }),
-  });
+  try {
+    const response = await fetch(`${RATIO_API_URL}/Cadastro`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nameUser, email, password }),
+    });
 
-  return response.json();
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Erro no servidor ao cadastrar");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    throw new Error(error.message || "Não foi possível conectar ao servidor");
+  }
 }
 
 // Verificação do código enviado por e-mail
 export async function verifyEmailUser(email, VerificationCode) {
-  const response = await fetch(`${RATIO_API_URL}/VerificarEmail`, {
+  const response = await fetch(`${RATIO_API_URL}/Verificar-Email`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, VerificationCode }),

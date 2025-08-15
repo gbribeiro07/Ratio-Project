@@ -10,24 +10,33 @@ const AuthController = {
 
     if (!refreshToken) {
       return res
-        .status(400)
+        .status(401)
         .json({ success: false, message: "Refresh token ausente!" });
     }
 
     try {
       const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
+      // Opcional: checar se o usuário ainda existe no banco
+      const user = await User.findOne({ where: { id: decoded.id } });
+      if (!user) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Usuário não encontrado!" });
+      }
+
+      // Gera novo access token
       const newAccessToken = jwt.sign(
-        { id: decoded.id, email: decoded.email, nameUser: decoded.nameUser },
+        { id: user.id, email: user.email, nameUser: user.nameUser },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRATION }
       );
 
-      return res.status(200).json({
-        success: true,
-        accessToken: newAccessToken,
-      });
+      return res
+        .status(200)
+        .json({ success: true, accessToken: newAccessToken });
     } catch (err) {
+      // Se o token for inválido ou expirado, retorna explicitamente sucesso falso
       return res.status(401).json({
         success: false,
         message: "Refresh token inválido ou expirado!",
@@ -39,7 +48,7 @@ const AuthController = {
   async Login(req, res) {
     const { email, password } = req.body;
 
-    if (!email.trim() || !password.trim()) {
+    if (!email || !password || !email.trim() || !password.trim()) {
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
@@ -91,12 +100,20 @@ const AuthController = {
         { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
       );
 
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
+        maxAge: process.env.JWT_EXPIRATION * 1000,
+        path: "/",
+      });
+
       // Define o refreshToken em um cookie HTTP-only seguro
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true, // garante envio apenas por HTTPS
-        sameSite: "Strict", // evita envio entre domínios
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
+        maxAge: process.env.JWT_REFRESH_EXPIRATION * 1000,
       });
 
       return res.status(200).json({
@@ -117,8 +134,8 @@ const AuthController = {
   async Logout(_, res) {
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
     });
 
     return res.status(200).json({

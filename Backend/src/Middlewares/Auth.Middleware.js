@@ -2,20 +2,20 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  // Primeiro tenta pegar do cookie
+  const token =
+    req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return res.status(401).json({
       success: false,
       message: "Token de autenticação não fornecido!",
     });
   }
 
-  const token = authHeader.split(" ")[1];
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // anexamos os dados ao req para uso posterior
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({

@@ -5,6 +5,7 @@ import Presentation from "./App.jsx";
 import { Login } from "./App.jsx";
 import { SignUp } from "./App.jsx";
 import { Home } from "./App.jsx";
+// import PrivateRoute from "./Middlewares/PrivateRoutes.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

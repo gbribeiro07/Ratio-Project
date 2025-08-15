@@ -201,28 +201,39 @@ export default function SignUpForm() {
   const [password, setPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  //isso será chamado assim que o formulário for enviado
   const handleSubmit = async (event) => {
-    event.preventDefault(); //evita que a página recarregue
+    event.preventDefault();
+    setMessage("");
 
     if (!nameUser || !email || !password) {
       setMessage("Preencha todos os campos!");
       return;
     }
 
-    try {
-      const response = await registerUser(nameUser, email, password, false);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setMessage("Por favor, insira um e-mail válido!");
+      return;
+    }
 
-      if (response.error) {
-        setMessage(`Erro: ${response.error}`);
-      } else {
-        setMessage("Código de verificação enviado para o seu email.");
-        setModalAberto(true);
+    setIsLoading(true);
+
+    try {
+      const response = await registerUser(nameUser, email, password);
+
+      if (!response.success) {
+        setMessage(response.message || "Erro no pré-cadastro");
+        return;
       }
+
+      setMessage("Código de verificação enviado para seu e-mail!");
+      setModalAberto(true);
     } catch (error) {
       console.error("Erro ao cadastrar usuário:", error);
-      setMessage("Erro ao cadastrar usuário.");
+      setMessage(error.message || "Erro ao processar cadastro");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -232,21 +243,30 @@ export default function SignUpForm() {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const response = await verifyEmailUser(email, verificationCode);
 
-      if (response.success) {
-        setMessage("Cadastro concluído com sucesso!");
+      if (!response.success) {
+        setMessage(response.message || "Código inválido!");
+        return;
+      }
+
+      setMessage("Cadastro concluído com sucesso! Você já pode fazer login.");
+      setTimeout(() => {
+        setMessage("");
         setModalAberto(false);
         setNameUser("");
         setEmail("");
         setPassword("");
-      } else {
-        setMessage("Código inválido!");
-      }
+        setVerificationCode("");
+      }, 3000);
     } catch (error) {
       console.error("Erro ao verificar código:", error);
-      setMessage("Erro ao verificar código.");
+      setMessage(error.message || "Erro ao verificar código");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -278,7 +298,9 @@ export default function SignUpForm() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <SubmitButton type="submit">Cadastrar-se</SubmitButton>
+        <SubmitButton type="submit" disabled={isLoading}>
+          {isLoading ? "Processando..." : "Cadastrar-se"}
+        </SubmitButton>
         <BackLink to="/Presentation">Voltar</BackLink>
       </FormContainer>
 
@@ -292,8 +314,8 @@ export default function SignUpForm() {
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
             />
-            <CodeSubButton onClick={handleVerifyCode}>
-              Confirmar Código
+            <CodeSubButton onClick={handleVerifyCode} disabled={isLoading}>
+              {isLoading ? "Verificando..." : "Confirmar Código"}
             </CodeSubButton>
           </ModalConteúdo>
         </ModalFundo>
