@@ -35,33 +35,6 @@ CREATE TABLE Contents (
     FOREIGN KEY (idUser) REFERENCES User(idUser)
 );
 
-CREATE TABLE Favorites (
-    idFavorite INT AUTO_INCREMENT PRIMARY KEY,
-    idUser INT NOT NULL,   -- Quem salvou o conteúdo
-    idContent INT NOT NULL,  -- ID do conteúdo salvo (post ou vídeo)
-    dateSaved DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idUser) REFERENCES User(idUser),
-    FOREIGN KEY (idContent) REFERENCES Contents(idContent)
-);
-
-CREATE TABLE Collections (
-    idCollection INT AUTO_INCREMENT PRIMARY KEY,
-    idUser INT NOT NULL,
-    nameCollection VARCHAR(100) NOT NULL,
-    dateCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idUser) REFERENCES User(idUser)
-);
-
-
-CREATE TABLE Collection_Items (
-    idCollectionItem INT AUTO_INCREMENT PRIMARY KEY,
-    idCollection INT NOT NULL,
-    idContent INT NOT NULL,  -- Qual conteúdo foi adicionado
-    dateAdded DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idCollection) REFERENCES Collections(idCollection),
-    FOREIGN KEY (idContent) REFERENCES Contents(idContent)
-);
-
 CREATE TABLE Questions (
     idQuestion INT AUTO_INCREMENT PRIMARY KEY,
     idUser INT NOT NULL,  -- Quem fez a pergunta

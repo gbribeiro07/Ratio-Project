@@ -113,7 +113,7 @@ export default function LoginForm() {
       navigate("/Home", { replace: true, state: { fromLogin: true } });
     } catch (error) {
       console.error("Erro no login:", error);
-      setMessage("Erro ao conectar com o servidor");
+      setMessage("Erro ao fazer login. Tente novamente.");
     } finally {
       setIsLoading(false);
     }

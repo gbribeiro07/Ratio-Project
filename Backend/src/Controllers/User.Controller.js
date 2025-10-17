@@ -134,6 +134,7 @@ const UserController = {
     }
   },
 
+  //Puxa os dados do
   async getUserBasics(req, res) {
     console.log("Buscando usuário com ID:", req.user?.id);
     try {

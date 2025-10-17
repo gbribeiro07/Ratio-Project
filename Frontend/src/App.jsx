@@ -12,15 +12,16 @@ import PBottom from "./Components/Presentation/PBottom";
 import LoginPage from "./Components/Login/LoginPage";
 import SignUpPage from "./Components/SignUp/SignUpPage";
 import Header from "./Components/Home/Header";
-import HMenu from "./Components/Home/HMenu";
 import HTitle from "./Components/Home/HTitle";
 import HB1 from "./Components/Home/HB1";
-import HB2 from "./Components/Home/HB2";
-import HB3 from "./Components/Home/HB3";
+import GlobalStyle from "../GlobalStyle";
+// import HB2 from "./Components/Home/HB2";
+// import HB3 from "./Components/Home/HB3";
 
 export default function Presentation() {
   return (
     <>
+      <GlobalStyle />
       <PHeader>
         <FPMenu>
           <img src="path/to/logo.png" alt="Logo" />{" "}
@@ -42,6 +43,7 @@ export default function Presentation() {
 export function Login() {
   return (
     <>
+      <GlobalStyle />
       <LoginPage></LoginPage>
     </>
   );
@@ -50,6 +52,7 @@ export function Login() {
 export function SignUp() {
   return (
     <>
+      <GlobalStyle />
       <SignUpPage></SignUpPage>
     </>
   );
@@ -58,16 +61,11 @@ export function SignUp() {
 export function Home() {
   return (
     <>
+      <GlobalStyle />
       <Header>
-        <HMenu>
-          <img src="path/to/logo.png" alt="Logo" />{" "}
-          {/* Caminho da sua imagem */}
-        </HMenu>
         <HTitle>Ratio</HTitle>
       </Header>
       <HB1 />
-      <HB2 />
-      <HB3 />
     </>
   );
 }

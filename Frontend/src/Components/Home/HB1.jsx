@@ -3,13 +3,12 @@ import { useEffect, useState } from "react";
 import { getUser } from "../../Services/User.Api";
 
 const HB1Container = styled.div`
-  background-color: #000000;
+  background-color: #181818;
   display: flex;
-  width: 101.05%;
-  height: 1158px;
-  margin-top: 0;
-  margin-left: -8px;
-  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  font-family: "Georgia", serif;
 `;
 
 const WelcomeMessage = styled.div`

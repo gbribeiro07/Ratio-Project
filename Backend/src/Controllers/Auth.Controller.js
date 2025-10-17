@@ -80,12 +80,18 @@ const AuthController = {
         });
       }
 
+      console.log(
+        "CHAVE SECRETA USADA PARA ASSINAR (LOGIN):",
+        process.env.JWT_SECRET.trim()
+      );
+
+      console.log("VALOR DE EXPIRACAO USADO:", process.env.JWT_EXPIRATION);
+
       const accessToken = jwt.sign(
         {
           id: user.idUser,
           email: user.email,
           nameUser: user.nameUser,
-          path: "/",
         },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRATION }
@@ -96,7 +102,6 @@ const AuthController = {
           id: user.idUser,
           email: user.email,
           nameUser: user.nameUser,
-          path: "/",
         },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
@@ -104,18 +109,15 @@ const AuthController = {
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
-        maxAge: process.env.JWT_EXPIRATION * 1000,
-        path: "/",
+        secure: process.env.NODE_ENV,
+        sameSite: "lax",
       });
 
       // Define o refreshToken em um cookie HTTP-only seguro
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
-        maxAge: process.env.JWT_REFRESH_EXPIRATION * 1000,
+        secure: process.env.NODE_ENV,
+        sameSite: "lax",
       });
 
       return res.status(200).json({
