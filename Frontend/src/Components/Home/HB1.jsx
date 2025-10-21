@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { getUser } from "../../Services/User.Api";
+import ProfilesBlock from "./ProfilesBlock";
 
-const HB1Container = styled.div`
+const HomeContainer = styled.div`
   background-color: #181818;
   display: flex;
   min-height: 100vh;
@@ -11,16 +12,20 @@ const HB1Container = styled.div`
   font-family: "Georgia", serif;
 `;
 
-const WelcomeMessage = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 10%;
-  transform: translateY(-50%);
-  color: white;
-  font-size: 3rem;
-  font-weight: bold;
-  text-align: left;
-  max-width: 50%;
+// Bloco da esquerda (Perfis) - 50% da largura
+const LeftBlock = styled.div`
+  width: 50%;
+  height: 100%;
+  padding: 40px;
+  background-color: #181818;
+`;
+
+// Bloco da direita (Ranking) - 50% da largura
+const RightBlock = styled.div`
+  width: 50%;
+  height: 100%;
+  padding: 40px;
+  /* Este será o contêiner que receberá a div branca do ranking */
 `;
 
 export default function HB1() {
@@ -28,6 +33,7 @@ export default function HB1() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // A busca de dados do usuário permanece aqui, pois ProfilesBlock e RankingBlock podem precisar deles
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -49,25 +55,41 @@ export default function HB1() {
 
   if (loading) {
     return (
-      <HB1Container>
+      <HomeContainer>
         <div style={{ color: "white", margin: "auto" }}>Carregando...</div>
-      </HB1Container>
+      </HomeContainer>
     );
   }
 
   if (error) {
     return (
-      <HB1Container>
+      <HomeContainer>
         <div style={{ color: "white", margin: "auto" }}>{error}</div>
-      </HB1Container>
+      </HomeContainer>
     );
   }
 
+  // Retorna a estrutura 50/50 com o Bloco dos Perfis implementado
   return (
-    <HB1Container>
-      {userData && (
-        <WelcomeMessage>Bem-vindo, {userData.nameUser}!</WelcomeMessage>
-      )}
-    </HB1Container>
+    <HomeContainer>
+      <LeftBlock>
+        {/* Passamos o nome do usuário para ProfilesBlock, caso seja necessário */}
+        <ProfilesBlock userName={userData?.nameUser} />
+      </LeftBlock>
+
+      <RightBlock>
+        {/* Futuro Bloco do Ranking (div branca) */}
+        <div
+          style={{
+            backgroundColor: "white",
+            height: "100%",
+            borderRadius: "15px",
+            boxShadow: "0 0 20px rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          {/* O conteúdo do ranking será inserido aqui */}
+        </div>
+      </RightBlock>
+    </HomeContainer>
   );
 }

@@ -1,7 +1,6 @@
 // import { useState } from 'react'
 import PHeader from "./Components/Presentation/PHeader";
 import PTitle from "./Components/Presentation/PTitle";
-import FPMenu from "./Components/Presentation/PMenu";
 import SignUpTxt from "./Components/Presentation/SignUpTxt";
 import LoginTxt from "./Components/Presentation/LoginTxt";
 import PB1 from "./Components/Presentation/PB1";
@@ -23,10 +22,6 @@ export default function Presentation() {
     <>
       <GlobalStyle />
       <PHeader>
-        <FPMenu>
-          <img src="path/to/logo.png" alt="Logo" />{" "}
-          {/* Caminho da sua imagem */}
-        </FPMenu>
         <PTitle>Ratio</PTitle>
         <SignUpTxt>Cadastrar-se</SignUpTxt>
         <LoginTxt>Login</LoginTxt>

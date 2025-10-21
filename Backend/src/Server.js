@@ -7,6 +7,7 @@ const sequelize = require("./Config/Db");
 const cookieParser = require("cookie-parser");
 const userRoutes = require("./Routes/User.Route");
 const authRoutes = require("./Routes/Auth.Route");
+const profileRoutes = require("./Routes/Profile.Route");
 
 const port = process.env.PORT || 3001;
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 // Rotas
 app.use("/Ratio", userRoutes);
 app.use("/Ratio", authRoutes);
+app.use("/Ratio", profileRoutes);
 
 // Testa conexão com o banco e inicia o servidor
 sequelize

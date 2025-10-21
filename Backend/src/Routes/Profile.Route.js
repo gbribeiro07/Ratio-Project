@@ -4,7 +4,7 @@ const ProfileController = require("../Controllers/Profile.Controller");
 const authMiddleware = require("../Middlewares/Auth.Middleware");
 
 router.post(
-  "/Cadastro/Perfil/:id",
+  "/Cadastro/Perfil",
   authMiddleware,
   ProfileController.RegisterProfile
 );

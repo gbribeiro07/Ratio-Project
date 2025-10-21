@@ -1,53 +1,113 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { loginUser } from "../../Services/Auth.Api";
 
+// Keyframes para animação de entrada
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
 const FormContainer = styled.div`
-  background-color: #3a322d;
-  padding: 70px;
-  border-radius: 10px;
-  width: 600px;
+  background: linear-gradient(145deg, #2c2724, #1f1b18);
+  padding: 40px;
+  border-radius: 12px;
+  width: 650px;
+  max-width: 90%;
   text-align: center;
-  color: white;
-  font-family: Arial, sans-serif;
+  color: #f0f0f0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: auto;
-  margin-top: 100px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5);
+  animation: ${fadeIn} 0.6s ease-out;
 `;
 
 const Title = styled.h2`
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #f0f0f0;
+  text-transform: uppercase;
 `;
 
 const Label = styled.label`
   display: block;
-  margin: 15px 0 5px;
-  font-weight: bold;
+  margin: 15px 0 8px;
+  font-weight: 600;
   text-align: left;
+  font-size: 14px;
+  color: #cccccc;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #d3d3d3;
+  padding: 12px 15px;
+  border: 1px solid #4a4440;
+  border-radius: 8px;
+  background-color: #1e1a17;
+  color: #ffffff;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:focus {
+    border-color: blueviolet;
+    outline: none;
+    box-shadow: 0 0 5px rgba(88, 0, 170, 0.5);
+  }
+
+  &::placeholder {
+    color: #888;
+  }
 `;
 
 const SubmitButton = styled.button`
-  margin-top: 20px;
+  margin-top: 30px;
   display: block;
   width: 100%;
-  padding: 10px;
-  background-color: #00cc66;
-  color: white;
+  padding: 12px;
+  background-color: blueviolet;
+  color: #1e1a17;
   font-weight: bold;
+  font-size: 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 
   &:hover {
-    background-color: #00994d;
+    background-color: #5a00ae;
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: #4a4440;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const BackLink = styled(Link)`
+  display: block;
+  margin-top: 25px;
+  font-size: 14px;
+  color: #ccc;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+
+  &:before {
+    content: "← ";
+  }
+
+  &:hover {
+    color: blueviolet;
   }
 `;
 
@@ -58,26 +118,11 @@ const RegisterLink = styled.p`
 `;
 
 const StyledLink = styled(Link)`
-  color: blue;
+  color: blueviolet;
   font-weight: bold;
   text-decoration: none;
   &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const BackLink = styled(Link)`
-  display: block;
-  margin-top: 20px;
-  font-size: 14px;
-  font-weight: bold;
-  color: black;
-  &:before {
-    content: "← ";
-  }
-  &:hover {
-    text-decoration: underline;
-    color: blueviolet;
+    color: #5a00ae;
   }
 `;
 

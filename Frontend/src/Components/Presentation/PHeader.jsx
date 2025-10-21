@@ -8,12 +8,10 @@ const PHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 35px;
-  width: 101.05%;
-  margin: 0;
   box-sizing: border-box;
-  margin-left: -8px;
-  /* margin-right: -100px; */
+  margin: 0;
   margin-top: -9px;
+  width: 100%;
 `;
 
 export default PHeader;
