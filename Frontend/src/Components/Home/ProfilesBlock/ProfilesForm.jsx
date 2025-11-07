@@ -1,7 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { registerProfile } from "../../Services/Profile.Api";
+import { registerProfile } from "../../../Services/Profile.Api";
 
 // Keyframes (Reutilizado do SignUpForm)
 const fadeIn = keyframes`

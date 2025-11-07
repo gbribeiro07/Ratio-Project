@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-const SignUpText = styled(Link)`
+const TutoriaisText = styled(Link)`
   color: white;
-  margin-right: 55px;
+  margin-right: 70px;
   font-size: 15px;
   text-align: right;
   flex-shrink: 0;
@@ -16,6 +16,6 @@ const SignUpText = styled(Link)`
   }
 `;
 
-export default function SignUpTxt() {
-  return <SignUpText to="/SignUp">Cadastrar-se</SignUpText>;
+export default function TutoriaisTxt() {
+  return <TutoriaisText to="/Tutoriais">Tutoriais</TutoriaisText>;
 }

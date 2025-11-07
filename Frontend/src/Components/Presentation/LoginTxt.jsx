@@ -7,7 +7,7 @@ const LoginText = styled(Link)`
   font-size: 15px;
   text-align: right;
   flex-shrink: 0;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-weight: bold;
   text-decoration: none;
 

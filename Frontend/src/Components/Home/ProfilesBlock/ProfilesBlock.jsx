@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
-import { getProfile } from "../../Services/Profile.Api";
-// IMPORTANTE: Importa o componente renomeado
+import { getProfile } from "../../../Services/Profile.Api";
 import ProfilesForm from "./ProfilesForm";
 
 // Ícone de Adição (usando um SVG simples como alternativa a bibliotecas)
@@ -28,8 +27,6 @@ PlusIcon.propTypes = {
   strokeWidth: PropTypes.number,
 };
 
-// --- Styled Components ---
-
 const BlockContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -38,12 +35,15 @@ const BlockContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  margin-bottom: 30px;
+  margin-top: 40px;
+  margin-left: 10px;
+  margin-bottom: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   span {
-    color: #6c00ff; /* Cor roxa da imagem de referência */
+    color: blueviolet;
   }
 `;
 
@@ -51,7 +51,9 @@ const SearchBarContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 25px;
+  margin-left: 10px;
+  width: 96%;
+  margin-bottom: 30px;
 `;
 
 const SearchInput = styled.input`
@@ -66,7 +68,7 @@ const SearchInput = styled.input`
     color: #999999;
   }
   &:focus {
-    outline: 2px solid #6c00ff;
+    outline: 2px solid blueviolet;
   }
 `;
 
@@ -74,13 +76,13 @@ const PlusButton = styled.button`
   padding: 10px;
   background-color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #f0f0f0;
+    background-color: blueviolet;
   }
 `;
 
@@ -108,12 +110,15 @@ const ProfilesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 colunas de tamanho igual */
   gap: 20px;
-  padding-bottom: 20px; /* Para garantir espaço para o último item */
+  padding-bottom: 20px;
 `;
 
 // Componente do Cartão de Perfil
 const ProfileCard = styled.div`
-  height: 180px; /* Altura do cartão conforme imagem de ref. */
+  height: 190px;
+  width: 310px;
+  margin-left: 10px;
+  margin-top: 10px;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
   cursor: pointer;
@@ -121,6 +126,7 @@ const ProfileCard = styled.div`
   display: flex;
   align-items: flex-end;
   padding: 15px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-weight: bold;
   font-size: 1.2rem;
 
@@ -206,7 +212,7 @@ export default function ProfilesBlock() {
     <BlockContainer>
       {/* Título */}
       <Title>
-        Acesse <span>seus perfis</span>
+        <span>Acesse</span> seus perfis
       </Title>
 
       {/* Barra de Pesquisa e Botão "+" */}
@@ -228,7 +234,6 @@ export default function ProfilesBlock() {
       {/* Carrossel Vertical (Scrollable Area) */}
       <CarouselWrapper>
         {loading && <p style={{ color: "#aaa" }}>Carregando perfis...</p>}
-        {/* {error && <p style={{ color: "red" }}>Erro: {error}</p>} */}
 
         {!loading && filteredProfiles.length === 0 && (
           <p style={{ color: "#aaa" }}>Nenhum perfil encontrado.</p>

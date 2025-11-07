@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { getUser } from "../../Services/User.Api";
-import ProfilesBlock from "./ProfilesBlock";
+import ProfilesBlock from "./ProfilesBlock/ProfilesBlock";
 
 const HomeContainer = styled.div`
-  background-color: #181818;
+  background-color: #101010;
   display: flex;
   min-height: 100vh;
   width: 100%;
@@ -17,7 +17,7 @@ const LeftBlock = styled.div`
   width: 50%;
   height: 100%;
   padding: 40px;
-  background-color: #181818;
+  background-color: #101010;
 `;
 
 // Bloco da direita (Ranking) - 50% da largura

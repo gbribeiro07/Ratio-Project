@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./Routes/User.Route");
 const authRoutes = require("./Routes/Auth.Route");
 const profileRoutes = require("./Routes/Profile.Route");
+const gameContentRoutes = require("./Routes/Games/GameContent.Route");
+const gameProgressRoutes = require("./Routes/Games/GameProgress.Route");
 
 const port = process.env.PORT || 3001;
 
@@ -27,6 +29,8 @@ app.use(cookieParser());
 app.use("/Ratio", userRoutes);
 app.use("/Ratio", authRoutes);
 app.use("/Ratio", profileRoutes);
+app.use("/Ratio", gameContentRoutes);
+app.use("/Ratio", gameProgressRoutes);
 
 // Testa conexão com o banco e inicia o servidor
 sequelize

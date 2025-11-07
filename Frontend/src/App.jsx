@@ -14,8 +14,10 @@ import Header from "./Components/Home/Header";
 import HTitle from "./Components/Home/HTitle";
 import HB1 from "./Components/Home/HB1";
 import GlobalStyle from "../GlobalStyle";
-// import HB2 from "./Components/Home/HB2";
-// import HB3 from "./Components/Home/HB3";
+import LabTxt from "./Components/Home/LabTxt";
+import TeoriaTxt from "./Components/Home/TeoriaTxt";
+import TutoriaisTxt from "./Components/Home/TutoriaisTxt";
+import DuvidasTxt from "./Components/Home/DuvidasTxt";
 
 export default function Presentation() {
   return (
@@ -59,6 +61,10 @@ export function Home() {
       <GlobalStyle />
       <Header>
         <HTitle>Ratio</HTitle>
+        <LabTxt />
+        <TeoriaTxt />
+        <TutoriaisTxt />
+        <DuvidasTxt />
       </Header>
       <HB1 />
     </>
