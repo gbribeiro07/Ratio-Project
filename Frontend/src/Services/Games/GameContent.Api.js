@@ -86,7 +86,7 @@ export async function assignGameToProfiles(idGame, idProfiles) {
   }
 }
 
-export async function listPresets() {
+export async function getPresets() {
   try {
     const response = await fetch(`${RATIO_API_URL}/Jogo/Lista/Presets`, {
       method: "GET",

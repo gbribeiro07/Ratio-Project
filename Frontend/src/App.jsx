@@ -18,6 +18,8 @@ import LabTxt from "./Components/Home/LabTxt";
 import TeoriaTxt from "./Components/Home/TeoriaTxt";
 import TutoriaisTxt from "./Components/Home/TutoriaisTxt";
 import DuvidasTxt from "./Components/Home/DuvidasTxt";
+import HomeTxt from "./Components/Home/HomeTxt";
+import LabPage from "./Components/Lab/LabPage";
 
 export default function Presentation() {
   return (
@@ -61,12 +63,30 @@ export function Home() {
       <GlobalStyle />
       <Header>
         <HTitle>Ratio</HTitle>
+        <HomeTxt />
         <LabTxt />
         <TeoriaTxt />
         <TutoriaisTxt />
         <DuvidasTxt />
       </Header>
       <HB1 />
+    </>
+  );
+}
+
+export function Lab() {
+  return (
+    <>
+      <GlobalStyle />
+      <Header>
+        <HTitle>Ratio</HTitle>
+        <HomeTxt />
+        <LabTxt />
+        <TeoriaTxt />
+        <TutoriaisTxt />
+        <DuvidasTxt />
+      </Header>
+      <LabPage />
     </>
   );
 }

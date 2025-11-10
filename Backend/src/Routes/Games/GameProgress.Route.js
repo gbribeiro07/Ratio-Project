@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const GameProgressController = require("../Controllers/GameProgress.Controller");
-const authMiddleware = require("../Middlewares/Auth.Middleware");
+const GameProgressController = require("../../Controllers/Games/GameProgress.Controller");
+const authMiddleware = require("../../Middlewares/Auth.Middleware");
 
 //Lista todos os jogos que foram enviados para o perfil logado
 router.get(

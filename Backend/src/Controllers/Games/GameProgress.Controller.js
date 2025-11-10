@@ -1,7 +1,7 @@
 // GameProgress.Controller.js
 
 const { Op } = require("sequelize");
-const sequelize = require("../Config/Db");
+const sequelize = require("../../Config/Db");
 
 // Importação dos Models
 const GameAssignments = require("../../Models/Games/GameAss.Model");
@@ -11,7 +11,7 @@ const GameQuestions = require("../../Models/Games/GameQuestions.Model");
 const GameAnswers = require("../../Models/Games/GameAnswers.Model");
 const GamePhases = require("../../Models/Games/GamePhases.Model");
 const Ranking = require("../../Models/Games/Ranking.Model");
-const Profiles = require("../../Models/Games/Profiles.Model");
+const Profiles = require("../Profile.Controller");
 
 const GameProgressController = {
   // LISTAGEM DE JOGOS ATRIBUÍDOS (Visão do Aluno)
@@ -39,13 +39,11 @@ const GameProgressController = {
 
       return res.status(200).json({ success: true, data: assignedGames });
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Erro ao listar jogos atribuídos.",
-          error: error.message,
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao listar jogos atribuídos.",
+        error: error.message,
+      });
     }
   },
 
@@ -62,12 +60,10 @@ const GameProgressController = {
       });
 
       if (!assignment) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: "Atribuição de jogo não encontrada para este perfil.",
-          });
+        return res.status(404).json({
+          success: false,
+          message: "Atribuição de jogo não encontrada para este perfil.",
+        });
       }
 
       // 2. Busca ou Cria o GameProgress
@@ -83,30 +79,24 @@ const GameProgressController = {
       );
 
       if (!nextQuestion) {
-        return res
-          .status(200)
-          .json({
-            success: true,
-            message: "Parabéns! O jogo foi concluído!",
-            data: { progress, nextQuestion: null },
-          });
+        return res.status(200).json({
+          success: true,
+          message: "Parabéns! O jogo foi concluído!",
+          data: { progress, nextQuestion: null },
+        });
       }
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "Progresso do jogo retornado com sucesso.",
-          data: { progress, nextQuestion },
-        });
+      return res.status(200).json({
+        success: true,
+        message: "Progresso do jogo retornado com sucesso.",
+        data: { progress, nextQuestion },
+      });
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Erro ao iniciar/retomar o jogo.",
-          error: error.message,
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao iniciar/retomar o jogo.",
+        error: error.message,
+      });
     }
   },
 
@@ -191,12 +181,10 @@ const GameProgressController = {
       });
       if (!assignment) {
         await transaction.rollback();
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: "Atribuição de jogo não encontrada.",
-          });
+        return res.status(404).json({
+          success: false,
+          message: "Atribuição de jogo não encontrada.",
+        });
       }
 
       // 2. Busca a resposta modelo para a questão (A resposta é considerada correta se bater com ALGUMA resposta modelo)
@@ -279,22 +267,18 @@ const GameProgressController = {
       }
 
       await transaction.commit();
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "Resposta registrada.",
-          data: { isCorrect: isAnswerCorrect },
-        });
+      return res.status(200).json({
+        success: true,
+        message: "Resposta registrada.",
+        data: { isCorrect: isAnswerCorrect },
+      });
     } catch (error) {
       await transaction.rollback();
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Erro ao processar resposta e atualizar progresso.",
-          error: error.message,
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao processar resposta e atualizar progresso.",
+        error: error.message,
+      });
     }
   },
 
@@ -318,13 +302,11 @@ const GameProgressController = {
 
       return res.status(200).json({ success: true, data: topRankings });
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Erro ao buscar o Ranking.",
-          error: error.message,
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao buscar o Ranking.",
+        error: error.message,
+      });
     }
   },
 };

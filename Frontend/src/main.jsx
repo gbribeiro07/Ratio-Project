@@ -5,6 +5,7 @@ import Presentation from "./App.jsx";
 import { Login } from "./App.jsx";
 import { SignUp } from "./App.jsx";
 import { Home } from "./App.jsx";
+import { Lab } from "./App.jsx";
 // import PrivateRoute from "./Middlewares/PrivateRoutes.jsx";
 
 createRoot(document.getElementById("root")).render(
@@ -17,6 +18,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/Login" element={<Login />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Home" element={<Home />} />
+        <Route path="/Lab" element={<Lab />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

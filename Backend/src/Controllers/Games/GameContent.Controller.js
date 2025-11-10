@@ -1,6 +1,6 @@
 const { Op } = require("sequelize"); // Para futuras consultas
-const sequelize = require("../Config/Db"); // Instância do Sequelize
-const { isPreset } = require("../Models/Games.Model");
+const sequelize = require("../../Config/Db"); // Instância do Sequelize
+const { isPreset } = require("../../Models/Games/Games.Model");
 
 // Importação dos Models
 const Games = require("../../Models/Games/Games.Model");
