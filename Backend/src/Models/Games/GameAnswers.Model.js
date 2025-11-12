@@ -19,7 +19,7 @@ const GameAnswers = sequelize.define(
   }
 );
 
-const Question = require("./GameQuestions.Model");
-GameAnswers.belongsTo(Question, { foreignKey: "idGameQuestion" });
+// const Question = require("./GameQuestions.Model");
+// GameAnswers.belongsTo(Question, { foreignKey: "idGameQuestion" });
 
 module.exports = GameAnswers;

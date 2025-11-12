@@ -26,7 +26,7 @@ const Games = sequelize.define(
   }
 );
 
-const User = require("../User.Model");
-Games.belongsTo(User, { foreignKey: "idUser" });
+// const User = require("../User.Model");
+// Games.belongsTo(User, { foreignKey: "idUser" });
 
 module.exports = Games;

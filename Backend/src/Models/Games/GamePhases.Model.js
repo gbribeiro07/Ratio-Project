@@ -20,7 +20,7 @@ const GamePhases = sequelize.define(
   }
 );
 
-const Game = require("./Games.Model");
-GamePhases.belongsTo(Game, { foreignKey: "idGame" });
+// const Game = require("./Games.Model");
+// GamePhases.belongsTo(Game, { foreignKey: "idGame" });
 
 module.exports = GamePhases;

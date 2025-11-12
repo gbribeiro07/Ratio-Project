@@ -21,7 +21,7 @@ const GameProgress = sequelize.define(
   }
 );
 
-const Assignment = require("./GameAss.Model");
-GameProgress.belongsTo(Assignment, { foreignKey: "idAssignment" });
+// const Assignment = require("./GameAss.Model");
+// GameProgress.belongsTo(Assignment, { foreignKey: "idAssignment" });
 
 module.exports = GameProgress;

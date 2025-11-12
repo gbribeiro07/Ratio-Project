@@ -134,7 +134,7 @@ const CloseButton = styled.button`
 `;
 
 const Message = styled.p`
-  color: ${(props) => (props.error ? "red" : "#6C00FF")};
+  color: ${(props) => (props.$error ? "red" : "#6C00FF")};
   margin-top: 15px;
   font-size: 14px;
 `;
@@ -486,7 +486,7 @@ export default function GamesForm({ onClose, onGameCreated }) {
           id="totalPhases"
           type="number"
           placeholder="5"
-          value={totalPhases}
+          value={totalPhases || ""}
           onChange={(e) => setTotalPhases(e.target.value)}
           min="1"
         />
@@ -515,7 +515,7 @@ export default function GamesForm({ onClose, onGameCreated }) {
             <Input
               id={`required-${phaseIndex}`}
               type="number"
-              value={phase.requiredCorrectAnswers}
+              value={phase.requiredCorrectAnswers || ""}
               onChange={(e) =>
                 handlePhaseChange(
                   phaseIndex,
@@ -579,7 +579,7 @@ export default function GamesForm({ onClose, onGameCreated }) {
                   htmlFor={`a-${phaseIndex}-${questionIndex}`}
                   style={{ marginTop: "10px" }}
                 >
-                  Resposta Correta Modelo (Case-Insensitive no Controller)
+                  Resposta Correta Modelo
                 </Label>
                 <Input
                   id={`a-${phaseIndex}-${questionIndex}`}
@@ -665,14 +665,12 @@ export default function GamesForm({ onClose, onGameCreated }) {
                 <p>Nenhum perfil encontrado.</p>
               )}
               {profiles.map((profile) => (
-                <ProfileItem key={profile.idProfile}>
-                  <span>
-                    {profile.nameUser || `Perfil #${profile.idProfile}`}
-                  </span>
+                <ProfileItem key={profile.nameProfile}>
+                  <span>{`${profile.nameProfile}`}</span>
                   <input
                     type="checkbox"
-                    checked={selectedProfiles.includes(profile.idProfile)}
-                    onChange={() => handleProfileSelect(profile.idProfile)}
+                    checked={selectedProfiles.includes(profile.nameProfile)}
+                    onChange={() => handleProfileSelect(profile.nameProfile)}
                   />
                 </ProfileItem>
               ))}
@@ -680,9 +678,9 @@ export default function GamesForm({ onClose, onGameCreated }) {
           </>
         )}
 
-        {message && <Message error={message.error}>{message.text}</Message>}
+        {message && <Message $error={message.error}>{message.text}</Message>}
 
-        {createdGameId && sendToProfiles && !message.error ? (
+        {createdGameId && sendToProfiles && (!message || !message.error) ? (
           <SubmitButton
             type="button"
             onClick={handleAssignmentSubmit}

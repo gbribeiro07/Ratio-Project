@@ -11,25 +11,6 @@ const GameAssignments = require("../../Models/Games/GameAss.Model");
 const GameProgress = require("../../Models/Games/GameProgress.Model"); // Necessário para exclusão
 
 const GameContentController = {
-  // 1. CRIAÇÃO DE JOGO (Criação de Preset)
-
-  /**
-   * Cria um Jogo Básico (o Preset) e seu conteúdo completo (Phases, Questions, Answers)
-   * Tudo é feito em uma transação.
-   * * @body {
-   * nameGame: 'Lógica' | 'Aritmética' | 'Geometria',
-   * totalPhases: 5,
-   * namePreset: 'Desafio Inicial',
-   * phases: [{
-   * phaseNumber: 1,
-   * requiredCorrectAnswers: 3,
-   * questions: [{
-   * questionText: 'Qual a capital...',
-   * answers: [{ modelAnswer: 'Brasília' }]
-   * }, ...]
-   * }, ...]
-   * }
-   */
   async CreateGame(req, res) {
     // Assume-se que req.user.id contém o idUser do professor logado
     const idUser = req.user.id;
@@ -114,13 +95,6 @@ const GameContentController = {
     }
   },
 
-  // 2. ATUALIZAÇÃO E EXCLUSÃO DE PRESETS
-
-  /**
-   * Atualiza o conteúdo de um Preset existente.
-   * Esta é uma função complexa que pode envolver deletar e recriar fases/questões.
-   * Para simplificar, focaremos apenas na atualização da Game principal (Games).
-   */
   async UpdatePreset(req, res) {
     const idGame = req.params.idGame;
     const idUser = req.user.idUser;
@@ -158,10 +132,6 @@ const GameContentController = {
     }
   },
 
-  /**
-   * Exclui um Preset e todo o seu conteúdo relacionado (cascata via SQL).
-   * Também exclui o progresso e as atribuições existentes.
-   */
   async DeletePreset(req, res) {
     const idGame = req.params.idGame;
     const idUser = req.user.id;
@@ -237,8 +207,8 @@ const GameContentController = {
         .json({ success: false, message: "IDs do Jogo ou Perfis faltando." });
     }
 
-    // 1. Verifica se o jogo existe e pertence ao professor (ou é um Preset global, se aplicável)
     try {
+      // 1. Verifica se o jogo existe e pertence ao professor (ou é um Preset global, se aplicável)
       const game = await Games.findOne({
         where: { idGame: idGame, idUser: idUser, isPreset: true },
       });
@@ -257,7 +227,7 @@ const GameContentController = {
       }));
 
       // Cria múltiplas atribuições (GameAssignments) de uma vez
-      await GameAssignments.bulkCreate(assignments, { ignoreDuplicates: true }); // Ignora se a mesma atribuição já existe
+      await GameAssignments.bulkCreate(assignments, { ignoreDuplicates: true });
 
       return res.status(200).json({
         success: true,
@@ -265,9 +235,12 @@ const GameContentController = {
         data: { idGame, profilesCount: idProfiles.length },
       });
     } catch (error) {
+      // Loga o erro exato do Sequelize/MySQL no console do servidor
+      console.error("ERRO DE INSERÇÃO NO BANCO (bulkCreate):", error.message);
       return res.status(500).json({
         success: false,
-        message: "Erro ao atribuir jogo aos perfis.",
+        message:
+          "Falha ao salvar as atribuições no banco de dados. (Verifique o log do servidor)",
         error: error.message,
       });
     }

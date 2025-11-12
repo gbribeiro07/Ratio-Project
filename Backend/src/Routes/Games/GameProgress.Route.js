@@ -5,7 +5,7 @@ const authMiddleware = require("../../Middlewares/Auth.Middleware");
 
 //Lista todos os jogos que foram enviados para o perfil logado
 router.get(
-  "/Jogo/Lista/Atribuidos",
+  "/Jogo/Lista/Atribuidos/:idProfile",
   authMiddleware,
   GameProgressController.ListAssignedGames
 );

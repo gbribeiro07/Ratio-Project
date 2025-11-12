@@ -19,7 +19,7 @@ const GameQuestions = sequelize.define(
   }
 );
 
-const Phase = require("./GamePhases.Model");
-GameQuestions.belongsTo(Phase, { foreignKey: "idPhase" });
+// const Phase = require("./GamePhases.Model");
+// GameQuestions.belongsTo(Phase, { foreignKey: "idPhase" });
 
 module.exports = GameQuestions;

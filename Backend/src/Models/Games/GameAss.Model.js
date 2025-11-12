@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../Config/Db");
+const GameProgress = require("./GameProgress.Model");
 
 const GameAssignments = sequelize.define(
   "GameAssignments",
@@ -23,10 +24,12 @@ const GameAssignments = sequelize.define(
   }
 );
 
-const Games = require("./Games.Model");
-GameAssignments.belongsTo(Games, { foreignKey: "idGame" });
+// const Games = require("./Games.Model");
+// GameAssignments.belongsTo(Games, { foreignKey: "idGame" });
 
-const Profiles = require("../Profiles.Model");
-GameAssignments.belongsTo(Profiles, { foreignKey: "idProfile" });
+// const Profiles = require("../Profiles.Model");
+// GameAssignments.belongsTo(Profiles, { foreignKey: "idProfile" });
+
+// GameAssignments.hasOne(GameProgress, { foreignKey: "idAssignment" });
 
 module.exports = GameAssignments;

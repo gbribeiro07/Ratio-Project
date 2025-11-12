@@ -1,5 +1,3 @@
-// GameProgress.Controller.js
-
 const { Op } = require("sequelize");
 const sequelize = require("../../Config/Db");
 
@@ -11,18 +9,36 @@ const GameQuestions = require("../../Models/Games/GameQuestions.Model");
 const GameAnswers = require("../../Models/Games/GameAnswers.Model");
 const GamePhases = require("../../Models/Games/GamePhases.Model");
 const Ranking = require("../../Models/Games/Ranking.Model");
-const Profiles = require("../Profile.Controller");
+const Profiles = require("../../Models/Profiles.Model");
+const User = require("../../Models/User.Model");
+const Games = require("../../Models/Games/Games.Model");
 
 const GameProgressController = {
   // LISTAGEM DE JOGOS ATRIBUÍDOS (Visão do Aluno)
 
   async ListAssignedGames(req, res) {
-    const idProfile = req.user.idProfile;
+    const idProfile = req.params.idProfile;
+    const idUser = req.user.id;
+
+    if (!idProfile || !idUser) {
+      return res.status(400).json({ success: false, message: "IDs ausentes." });
+    }
 
     try {
+      const profile = await Profiles.findOne({
+        where: { idProfile, idUser: idUser },
+      });
+
+      if (!profile) {
+        return res.status(403).json({
+          success: false,
+          message: "Acesso negado. Perfil não pertence ao usuário.",
+        });
+      }
       const assignedGames = await GameAssignments.findAll({
         where: { idProfile: idProfile },
         attributes: ["idAssignment", "dateAssigned"],
+
         include: [
           {
             model: Games, // Inclui o nome e tipo do jogo
@@ -39,6 +55,7 @@ const GameProgressController = {
 
       return res.status(200).json({ success: true, data: assignedGames });
     } catch (error) {
+      console.error("ERRO NO CONTROLLER ListAssignedGames:", error);
       return res.status(500).json({
         success: false,
         message: "Erro ao listar jogos atribuídos.",

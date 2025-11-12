@@ -1,16 +1,29 @@
 const RATIO_API_URL = import.meta.env.VITE_API_URL;
 
-export async function listAssignedGames() {
+export async function listAssignedGames(idProfile) {
+  if (!idProfile) {
+    throw new Error("IDs ausentes. idProfile não pode ser nulo.");
+  }
   try {
-    const response = await fetch(`${RATIO_API_URL}/Jogo/Lista/Atribuidos`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const data = await response.json();
+    const response = await fetch(
+      `${RATIO_API_URL}/Jogo/Lista/Atribuidos/${idProfile}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(data.message || "Erro ao listar jogos atribuídos.");
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (Error) {
+        throw new Error(`Erro HTTP ${response.status}. Verifique o servidor.`);
+      }
+      throw new Error(errorData.message || "Erro ao listar jogos atribuídos.");
     }
+
+    const data = await response.json();
 
     return data;
   } catch (error) {

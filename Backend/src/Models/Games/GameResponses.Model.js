@@ -22,10 +22,10 @@ const GameResponses = sequelize.define(
   }
 );
 
-const Assignment = require("./GameAss.Model");
-GameResponses.belongsTo(Assignment, { foreignKey: "idAssignment" });
+// const Assignment = require("./GameAss.Model");
+// GameResponses.belongsTo(Assignment, { foreignKey: "idAssignment" });
 
-const Question = require("./GameQuestions.Model");
-GameResponses.belongsTo(Question, { foreignKey: "idGameQuestion" });
+// const Question = require("./GameQuestions.Model");
+// GameResponses.belongsTo(Question, { foreignKey: "idGameQuestion" });
 
 module.exports = GameResponses;

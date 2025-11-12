@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-// import { getUser } from "../../Services/User.Api";
 import GamesForm from "./GamesForm";
 import PresetBlock from "./PresetBlock";
 import PropTypes from "prop-types";
@@ -118,15 +117,12 @@ export default function LabPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    // Simular carregamento de dados
     const fetchUserData = async () => {
-      try {
-        // const response = await getUser();
-        // if (!response.success) { /* set error from response if needed */ }
-      } catch {
-        // handle connection error if needed
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      // Simulação de delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setLoading(false);
     };
 
     fetchUserData();
@@ -163,7 +159,6 @@ export default function LabPage() {
 
   return (
     <GamesPageContainer>
-      {/* BLOCO DE CIMA: Título, Pesquisa e Botão '+' */}
       <TopBlock>
         <Title>
           Gestão de <span>Presets</span>
@@ -190,12 +185,10 @@ export default function LabPage() {
         </p>
       </TopBlock>
 
-      {/* BLOCO DE BAIXO: Carrossel de Presets */}
       <BottomBlock>
         <PresetBlock key={keyToReloadPresets} searchTerm={searchTerm} />
       </BottomBlock>
 
-      {/* MODAL DE CRIAÇÃO DE JOGO */}
       {isModalOpen && (
         <GamesForm
           onClose={handleCloseModal}
@@ -205,7 +198,3 @@ export default function LabPage() {
     </GamesPageContainer>
   );
 }
-LabPage.propTypes = {
-  size: PropTypes.func.isRequired,
-  strokeWidth: PropTypes.func.isRequired,
-};

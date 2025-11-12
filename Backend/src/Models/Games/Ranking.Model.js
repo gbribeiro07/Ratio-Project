@@ -20,7 +20,7 @@ const Ranking = sequelize.define(
   }
 );
 
-const Profiles = require("../Profiles.Model");
-Ranking.belongsTo(Profiles, { foreignKey: "idProfile" });
+// const Profiles = require("../Profiles.Model");
+// Ranking.belongsTo(Profiles, { foreignKey: "idProfile" });
 
 module.exports = Ranking;

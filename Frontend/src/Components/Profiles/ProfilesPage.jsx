@@ -1,11 +1,13 @@
 import styled from "styled-components";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
+import { getProfile } from "../../Services/Profile.Api";
 import {
   listAssignedGames,
   startOrResumeGame,
   submitAnswer,
 } from "../../Services/Games/GameProgress.Api";
+import { useParams } from "react-router-dom";
 
 const breakpoints = {
   tablet: "768px",
@@ -44,40 +46,6 @@ const Title = styled.h2`
 
   @media (max-width: ${breakpoints.tablet}) {
     font-size: 1.8rem;
-  }
-`;
-
-const ProfileSelector = styled.div`
-  display: flex;
-  gap: 15px;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-
-  @media (max-width: ${breakpoints.tablet}) {
-    gap: 10px;
-  }
-`;
-
-const ProfileButton = styled.button`
-  padding: 12px 24px;
-  background-color: ${(props) => (props.active ? "blueviolet" : "#2c2724")};
-  color: white;
-  border: 2px solid ${(props) => (props.active ? "blueviolet" : "#4a4440")};
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-
-  &:hover {
-    border-color: blueviolet;
-    background-color: ${(props) => (props.active ? "blueviolet" : "#3a3530")};
-  }
-
-  @media (max-width: ${breakpoints.tablet}) {
-    padding: 10px 16px;
-    font-size: 0.9rem;
   }
 `;
 
@@ -661,49 +629,60 @@ export default function ProfilesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const carouselRef = useRef(null);
+  const { idProfile: idProfileFromUrl } = useParams();
+
+  useEffect(() => {
+    if (idProfileFromUrl) {
+      setSelectedProfileId(idProfileFromUrl);
+    }
+  }, [idProfileFromUrl]);
 
   // Carregar perfis ao montar o componente
   useEffect(() => {
-    const loadProfiles = async () => {
+    const loadInitialData = async () => {
       try {
         setLoading(true);
-        const response = await listAssignedGames();
+        const profileResponse = await getProfile();
+        const uniqueProfiles = profileResponse.data || [];
 
-        if (response.success && Array.isArray(response.data)) {
-          // Extrair perfis únicos dos jogos atribuídos
-          const uniqueProfiles = [];
-          const profileIds = new Set();
+        setProfiles(uniqueProfiles);
 
-          response.data.forEach((assignment) => {
-            if (!profileIds.has(assignment.idProfile)) {
-              profileIds.add(assignment.idProfile);
-              uniqueProfiles.push({
-                idProfile: assignment.idProfile,
-                nameProfile: assignment.nameProfile,
-              });
-            }
-          });
-
-          setProfiles(uniqueProfiles);
-          if (uniqueProfiles.length > 0) {
-            setSelectedProfileId(uniqueProfiles[0].idProfile);
-          }
-          setAssignedGames(response.data);
+        if (uniqueProfiles.length > 0) {
+          const initialProfileId = uniqueProfiles[0].idProfile;
+          setSelectedProfileId(initialProfileId);
         }
       } catch (err) {
-        console.error("Erro ao buscar perfis e jogos:", err);
-        setError("Erro ao carregar perfis e jogos. Tente novamente.");
+        console.error("Erro ao carregar perfis:", err);
+        setError("Erro ao carregar a lista de perfis. Tente novamente.");
       } finally {
         setLoading(false);
       }
     };
 
-    loadProfiles();
+    loadInitialData();
   }, []);
 
-  const handleProfileSelect = (profileId) => {
-    setSelectedProfileId(profileId);
-  };
+  // Carregar jogos quando o perfil selecionado mudar
+  const loadGames = useCallback(async () => {
+    if (!selectedProfileId) return;
+
+    try {
+      setLoading(true);
+      const response = await listAssignedGames(selectedProfileId);
+
+      if (response.success && Array.isArray(response.data)) {
+        setAssignedGames(response.data);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar jogos atribuídos:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedProfileId]);
+
+  useEffect(() => {
+    loadGames();
+  }, [loadGames]);
 
   const scroll = (direction) => {
     if (carouselRef.current) {
@@ -711,11 +690,6 @@ export default function ProfilesPage() {
       carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
-
-  // Filtrar jogos do perfil selecionado
-  const filteredGames = assignedGames.filter(
-    (assignment) => assignment.idProfile === selectedProfileId
-  );
 
   if (loading) {
     return (
@@ -745,49 +719,33 @@ export default function ProfilesPage() {
         Continue seu <span>progresso</span>
       </Title>
 
-      {profiles.length > 0 && (
-        <>
-          <ProfileSelector>
-            {profiles.map((profile) => (
-              <ProfileButton
-                key={profile.idProfile}
-                active={selectedProfileId === profile.idProfile}
-                onClick={() => handleProfileSelect(profile.idProfile)}
-              >
-                {profile.nameProfile}
-              </ProfileButton>
+      {assignedGames.length > 0 ? (
+        <CarouselContainer>
+          <NavButton direction="left" onClick={() => scroll("left")}>
+            <ArrowIcon direction="left" />
+          </NavButton>
+
+          <CarouselWrapper ref={carouselRef}>
+            {assignedGames.map((assignment) => (
+              <GameCardComponent
+                key={assignment.idAssignment}
+                game={assignment.game}
+                assignment={assignment}
+                profiles={profiles}
+              />
             ))}
-          </ProfileSelector>
+          </CarouselWrapper>
 
-          {filteredGames.length > 0 ? (
-            <CarouselContainer>
-              <NavButton direction="left" onClick={() => scroll("left")}>
-                <ArrowIcon direction="left" />
-              </NavButton>
-
-              <CarouselWrapper ref={carouselRef}>
-                {filteredGames.map((assignment) => (
-                  <GameCardComponent
-                    key={assignment.idAssignment}
-                    game={assignment.game}
-                    assignment={assignment}
-                    profiles={profiles}
-                  />
-                ))}
-              </CarouselWrapper>
-
-              <NavButton direction="right" onClick={() => scroll("right")}>
-                <ArrowIcon direction="right" />
-              </NavButton>
-            </CarouselContainer>
-          ) : (
-            <div style={{ marginTop: "40px", textAlign: "center" }}>
-              <LoadingMessage>
-                Nenhum jogo atribuído a este perfil ainda.
-              </LoadingMessage>
-            </div>
-          )}
-        </>
+          <NavButton direction="right" onClick={() => scroll("right")}>
+            <ArrowIcon direction="right" />
+          </NavButton>
+        </CarouselContainer>
+      ) : (
+        <div style={{ marginTop: "40px", textAlign: "center" }}>
+          <LoadingMessage>
+            Nenhum jogo atribuído a este perfil ainda.
+          </LoadingMessage>
+        </div>
       )}
 
       {profiles.length === 0 && (
