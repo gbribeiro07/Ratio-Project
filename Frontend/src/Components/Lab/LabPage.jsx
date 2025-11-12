@@ -179,10 +179,7 @@ export default function LabPage() {
           </PlusButton>
         </ControlsContainer>
 
-        <p style={{ color: "#aaa" }}>
-          Utilize a barra de pesquisa para filtrar rapidamente seus jogos
-          pré-configurados.
-        </p>
+        <p style={{ color: "#aaa" }}>Utilize o botão + para criar um jogo.</p>
       </TopBlock>
 
       <BottomBlock>
