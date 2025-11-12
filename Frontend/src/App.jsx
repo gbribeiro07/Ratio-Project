@@ -6,7 +6,6 @@ import LoginTxt from "./Components/Presentation/LoginTxt";
 import PB1 from "./Components/Presentation/PB1";
 import PB2 from "./Components/Presentation/PB2";
 import PB3 from "./Components/Presentation/PB3";
-import PB4 from "./Components/Presentation/PB4";
 import PBottom from "./Components/Presentation/PBottom";
 import LoginPage from "./Components/Login/LoginPage";
 import SignUpPage from "./Components/SignUp/SignUpPage";
@@ -17,9 +16,10 @@ import GlobalStyle from "../GlobalStyle";
 import LabTxt from "./Components/Home/LabTxt";
 import TeoriaTxt from "./Components/Home/TeoriaTxt";
 import TutoriaisTxt from "./Components/Home/TutoriaisTxt";
-import DuvidasTxt from "./Components/Home/DuvidasTxt";
 import HomeTxt from "./Components/Home/HomeTxt";
 import LabPage from "./Components/Lab/LabPage";
+import TeoriaPage from "./Components/Teoria/TeoriaPage";
+import TutoriaisPage from "./Components/Tutoriais/TutoriaisPage";
 
 export default function Presentation() {
   return (
@@ -33,7 +33,6 @@ export default function Presentation() {
       <PB1 />
       <PB2 />
       <PB3 />
-      <PB4 />
       <PBottom />
     </>
   );
@@ -67,7 +66,6 @@ export function Home() {
         <LabTxt />
         <TeoriaTxt />
         <TutoriaisTxt />
-        <DuvidasTxt />
       </Header>
       <HB1 />
     </>
@@ -84,9 +82,40 @@ export function Lab() {
         <LabTxt />
         <TeoriaTxt />
         <TutoriaisTxt />
-        <DuvidasTxt />
       </Header>
       <LabPage />
+    </>
+  );
+}
+
+export function Teoria() {
+  return (
+    <>
+      <GlobalStyle />
+      <Header>
+        <HTitle>Ratio</HTitle>
+        <HomeTxt />
+        <LabTxt />
+        <TeoriaTxt />
+        <TutoriaisTxt />
+      </Header>
+      <TeoriaPage />
+    </>
+  );
+}
+
+export function Tutoriais() {
+  return (
+    <>
+      <GlobalStyle />
+      <Header>
+        <HTitle>Ratio</HTitle>
+        <HomeTxt />
+        <LabTxt />
+        <TeoriaTxt />
+        <TutoriaisTxt />
+      </Header>
+      <TutoriaisPage />
     </>
   );
 }

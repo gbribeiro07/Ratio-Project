@@ -96,8 +96,8 @@ const SubmitButton = styled.button`
   display: block;
   width: 100%;
   padding: 12px;
-  background-color: #6c00ff;
-  color: #1e1a17;
+  background-color: blueviolet;
+  color: #ffffff;
   font-weight: bold;
   font-size: 16px;
   border: none;
@@ -106,7 +106,7 @@ const SubmitButton = styled.button`
   transition: background-color 0.3s, transform 0.2s;
 
   &:hover {
-    background-color: #5a00ae;
+    background-color: #42007f;
     transform: translateY(-2px);
   }
 

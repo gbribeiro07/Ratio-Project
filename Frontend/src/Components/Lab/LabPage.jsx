@@ -42,7 +42,7 @@ const Title = styled.h2`
   color: white;
 
   span {
-    color: #6c00ff;
+    color: blueviolet;
   }
 `;
 
@@ -66,13 +66,13 @@ const SearchInput = styled.input`
     color: #999999;
   }
   &:focus {
-    outline: 2px solid #6c00ff;
+    outline: 2px solid blueviolet;
   }
 `;
 
 const PlusButton = styled.button`
   padding: 10px;
-  background-color: #6c00ff;
+  background-color: #ffffff;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -83,7 +83,7 @@ const PlusButton = styled.button`
   justify-content: center;
 
   &:hover {
-    background-color: #5a00ae;
+    background-color: blueviolet;
     transform: scale(1.05);
   }
 `;
@@ -95,7 +95,7 @@ const PlusIcon = ({ size = 24, strokeWidth = 3 }) => (
     height={size}
     viewBox="0 0 24 24"
     fill="none"
-    stroke="white"
+    stroke="black"
     strokeWidth={strokeWidth}
     strokeLinecap="round"
     strokeLinejoin="round"

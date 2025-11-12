@@ -6,7 +6,8 @@ import { Login } from "./App.jsx";
 import { SignUp } from "./App.jsx";
 import { Home } from "./App.jsx";
 import { Lab } from "./App.jsx";
-// import PrivateRoute from "./Middlewares/PrivateRoutes.jsx";
+import { Teoria } from "./App.jsx";
+import { Tutoriais } from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -19,6 +20,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/Lab" element={<Lab />} />
+        <Route path="/Teoria" element={<Teoria />} />
+        <Route path="/Tutoriais" element={<Tutoriais />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

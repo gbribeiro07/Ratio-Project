@@ -1,6 +1,11 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+const breakpoints = {
+  tablet: "768px",
+  mobileL: "425px",
+};
+
 const SignUpText = styled(Link)`
   color: white;
   margin-right: 55px;
@@ -13,6 +18,16 @@ const SignUpText = styled(Link)`
 
   &:hover {
     color: blueviolet;
+  }
+
+  @media (max-width: ${breakpoints.tablet}) {
+    margin-right: 30px;
+    font-size: 14px;
+  }
+
+  @media (max-width: ${breakpoints.mobileL}) {
+    margin-right: 15px;
+    font-size: 13px;
   }
 `;
 

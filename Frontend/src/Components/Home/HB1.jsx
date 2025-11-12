@@ -6,26 +6,67 @@ import ProfilesBlock from "./ProfilesBlock/ProfilesBlock";
 const HomeContainer = styled.div`
   background-color: #101010;
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   margin: 0;
   font-family: "Georgia", serif;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
 `;
 
-// Bloco da esquerda (Perfis) - 50% da largura
-const LeftBlock = styled.div`
-  width: 50%;
-  height: 100%;
+const BlockBase = styled.div`
   padding: 40px;
   background-color: #101010;
+  box-sizing: border-box;
+  height: 100%;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    min-height: 50vh;
+    height: auto;
+    padding: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px;
+  }
 `;
 
-// Bloco da direita (Ranking) - 50% da largura
-const RightBlock = styled.div`
+const LeftBlock = styled(BlockBase)`
   width: 50%;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
+`;
+
+const RightBlock = styled(BlockBase)`
+  width: 50%;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
+`;
+
+const RankingWrapper = styled.div`
+  background-color: white;
+  margin-left: 20px;
   height: 100%;
-  padding: 40px;
-  /* Este será o contêiner que receberá a div branca do ranking */
+  width: 600px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    min-height: 400px;
+  }
 `;
 
 export default function HB1() {
@@ -33,7 +74,6 @@ export default function HB1() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // A busca de dados do usuário permanece aqui, pois ProfilesBlock e RankingBlock podem precisar deles
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -55,40 +95,28 @@ export default function HB1() {
 
   if (loading) {
     return (
-      <HomeContainer>
-        <div style={{ color: "white", margin: "auto" }}>Carregando...</div>
+      <HomeContainer style={{ justifyContent: "center", alignItems: "center" }}>
+        <div style={{ color: "white" }}>Carregando...</div>
       </HomeContainer>
     );
   }
 
   if (error) {
     return (
-      <HomeContainer>
-        <div style={{ color: "white", margin: "auto" }}>{error}</div>
+      <HomeContainer style={{ justifyContent: "center", alignItems: "center" }}>
+        <div style={{ color: "white" }}>{error}</div>
       </HomeContainer>
     );
   }
 
-  // Retorna a estrutura 50/50 com o Bloco dos Perfis implementado
   return (
     <HomeContainer>
       <LeftBlock>
-        {/* Passamos o nome do usuário para ProfilesBlock, caso seja necessário */}
         <ProfilesBlock userName={userData?.nameUser} />
       </LeftBlock>
 
       <RightBlock>
-        {/* Futuro Bloco do Ranking (div branca) */}
-        <div
-          style={{
-            backgroundColor: "white",
-            height: "100%",
-            borderRadius: "15px",
-            boxShadow: "0 0 20px rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          {/* O conteúdo do ranking será inserido aqui */}
-        </div>
+        <RankingWrapper></RankingWrapper>
       </RightBlock>
     </HomeContainer>
   );

@@ -4,8 +4,7 @@ import PropTypes from "prop-types";
 import { getProfile } from "../../../Services/Profile.Api";
 import ProfilesForm from "./ProfilesForm";
 
-// Ícone de Adição (usando um SVG simples como alternativa a bibliotecas)
-const PlusIcon = ({ size = 24, strokeWidth = 3 }) => (
+const PlusIcon = ({ size = 20, strokeWidth = 2.5 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -35,45 +34,70 @@ const BlockContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 800;
-  margin-top: 40px;
+  margin-top: 30px;
   margin-left: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   span {
     color: blueviolet;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+    margin-top: 20px;
+    margin-left: 5px;
+    margin-bottom: 15px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.3rem;
+    margin-top: 15px;
   }
 `;
 
 const SearchBarContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
   margin-left: 10px;
   width: 96%;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 20px;
+    padding: 0 5px;
+    box-sizing: border-box;
+  }
 `;
 
 const SearchInput = styled.input`
   flex-grow: 1;
-  padding: 12px 18px;
+  padding: 10px 15px;
   background-color: #333333;
   border: none;
   border-radius: 8px;
   color: white;
-  font-size: 1rem;
+  font-size: 0.95rem;
   &::placeholder {
     color: #999999;
   }
   &:focus {
     outline: 2px solid blueviolet;
   }
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
 `;
 
 const PlusButton = styled.button`
-  padding: 10px;
+  padding: 8px;
   background-color: white;
   border: none;
   border-radius: 10px;
@@ -84,39 +108,61 @@ const PlusButton = styled.button`
   &:hover {
     background-color: blueviolet;
   }
+
+  @media (max-width: 768px) {
+    padding: 6px;
+  }
 `;
 
-// Contêiner principal do carrossel: Habilita o scroll vertical
 const CarouselWrapper = styled.div`
-  flex-grow: 1; /* Ocupa todo o espaço vertical restante */
-  overflow-y: auto; /* Habilita o scroll vertical */
-  padding-right: 15px; /* Espaço para a barra de scroll */
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+  gap: 15px;
+  flex-grow: 1;
+  max-width: 900px;
+  width: 100%;
+  height: 60vh;
+  box-sizing: border-box;
 
-  /* Estilização da barra de rolagem (opcional, para navegadores WebKit como Chrome/Safari) */
   &::-webkit-scrollbar {
     width: 8px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #6c00ff; /* Cor roxa */
+    background: blueviolet;
     border-radius: 4px;
   }
   &::-webkit-scrollbar-track {
-    background-color: #222222;
+    background: #1a1a1a;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: blueviolet #1a1a1a;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    height: 50vh;
+    gap: 15px;
   }
 `;
 
-// Grade para os perfis (2 colunas)
 const ProfilesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 colunas de tamanho igual */
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
   padding-bottom: 20px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 15px;
+  }
 `;
 
-// Componente do Cartão de Perfil
 const ProfileCard = styled.div`
-  height: 190px;
-  width: 310px;
+  height: 160px;
+  width: 280px;
   margin-left: 10px;
   margin-top: 10px;
   border-radius: 12px;
@@ -125,17 +171,28 @@ const ProfileCard = styled.div`
   transition: transform 0.2s, opacity 0.2s;
   display: flex;
   align-items: flex-end;
-  padding: 15px;
+  padding: 12px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 
   &:hover {
     transform: scale(1.05);
   }
+
+  @media (max-width: 768px) {
+    height: 140px;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    height: 120px;
+  }
 `;
 
-// Cores de exemplo para simular os avatares (pode ser substituído pelo avatar real)
 const EXAMPLE_COLORS = [
   "#A30000",
   "#6C00FF",
