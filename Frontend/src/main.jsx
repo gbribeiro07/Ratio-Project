@@ -8,6 +8,8 @@ import { Home } from "./App.jsx";
 import { Lab } from "./App.jsx";
 import { Teoria } from "./App.jsx";
 import { Tutoriais } from "./App.jsx";
+import { Profiles } from "./App.jsx";
+import { Materiais } from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -22,6 +24,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="/Lab" element={<Lab />} />
         <Route path="/Teoria" element={<Teoria />} />
         <Route path="/Tutoriais" element={<Tutoriais />} />
+        <Route path="/Perfil" element={<Profiles />} />
+        <Route path="/Materiais" element={<Materiais />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

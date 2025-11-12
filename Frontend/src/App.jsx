@@ -20,6 +20,11 @@ import HomeTxt from "./Components/Home/HomeTxt";
 import LabPage from "./Components/Lab/LabPage";
 import TeoriaPage from "./Components/Teoria/TeoriaPage";
 import TutoriaisPage from "./Components/Tutoriais/TutoriaisPage";
+import ProfilesHeader from "./Components/Profiles/ProfilesHeader";
+import MateriaisTxt from "./Components/Profiles/Materiais.txt";
+import SairTxt from "./Components/Profiles/Sair.txt";
+import ProfilesPage from "./Components/Profiles/ProfilesPage";
+import MateriaisPage from "./Components/Profiles/MateriaisPage";
 
 export default function Presentation() {
   return (
@@ -116,6 +121,34 @@ export function Tutoriais() {
         <TutoriaisTxt />
       </Header>
       <TutoriaisPage />
+    </>
+  );
+}
+
+export function Profiles() {
+  return (
+    <>
+      <GlobalStyle />
+      <ProfilesHeader>
+        <HTitle>Ratio</HTitle>
+        <MateriaisTxt />
+        <SairTxt />
+      </ProfilesHeader>
+      <ProfilesPage />
+    </>
+  );
+}
+
+export function Materiais() {
+  return (
+    <>
+      <GlobalStyle />
+      <ProfilesHeader>
+        <HTitle>Ratio</HTitle>
+        <MateriaisTxt />
+        <SairTxt />
+      </ProfilesHeader>
+      <MateriaisPage />
     </>
   );
 }

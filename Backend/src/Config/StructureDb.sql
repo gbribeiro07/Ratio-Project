@@ -58,7 +58,7 @@ CREATE TABLE Answers (
 CREATE TABLE Games (
     idGame INT AUTO_INCREMENT PRIMARY KEY,
     idUser INT NOT NULL, -- professor que criou o jogo
-    nameGame ENUM('Lógica', 'Aritmética', 'Geometria') NOT NULL,
+    nameGame VARCHAR(100) NOT NULL,
     totalPhases INT DEFAULT 5,
     isPreset BOOLEAN DEFAULT TRUE,  -- indica se é um jogo modelo (não enviado)
     namePreset VARCHAR(100),

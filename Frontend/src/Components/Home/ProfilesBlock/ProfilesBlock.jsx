@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { getProfile } from "../../../Services/Profile.Api";
 import ProfilesForm from "./ProfilesForm";
@@ -209,7 +210,8 @@ export default function ProfilesBlock() {
   const [loading, setLoading] = useState(true);
   const [, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para o Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Função para carregar os perfis (chamada ao montar e ao criar um novo)
   const loadProfiles = async () => {
@@ -244,10 +246,11 @@ export default function ProfilesBlock() {
     );
   }, [profiles, searchTerm]);
 
-  // Função de Ação do Cartão (Exemplo: Selecionar perfil)
+  // Função de Ação do Cartão
   const handleProfileClick = (idProfile) => {
     console.log(`Perfil ID: ${idProfile} selecionado.`);
-    // Lógica para definir o perfil ativo ou navegar para a dashboard do perfil
+    localStorage.setItem("activeProfileId", idProfile);
+    navigate("/Perfil");
   };
 
   // Função de Ação do Botão "+" (Abre o Modal)
