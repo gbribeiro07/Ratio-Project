@@ -27,7 +27,7 @@ const slideUp = keyframes`
   }
 `;
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
   background: linear-gradient(145deg, #2c2724, #1f1b18);
   padding: 40px;
   border-radius: 12px;
