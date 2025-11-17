@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import { useState, useEffect, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
+import GamesForm from "./GamesForm";
 import { getPresets, deletePreset } from "../../Services/Games/GameContent.Api";
-// import editarIcon from "../../../assets/editar-icon.png";
+import editarIcon from "../../assets/editar-icon.png";
 import lixeiraIcon from "../../assets/lixeira-icon.png";
+// import olhoIcon from "../../assets/olho-icon.png";
 
 const ArrowIcon = ({ size = 24, direction = "right" }) => (
   <svg
@@ -235,6 +237,8 @@ const ConfirmDeleteButton = styled.button`
 export default function PresetBlock({ searchTerm }) {
   const [presets, setPresets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState(null);
   const [, setMessage] = useState(null);
@@ -244,6 +248,9 @@ export default function PresetBlock({ searchTerm }) {
     try {
       setLoading(true);
       const response = await getPresets();
+
+      console.log("🎯 RESPOSTA COMPLETA DA API:", response);
+      console.log("📊 Número de presets:", response.data?.length);
 
       if (response.success && Array.isArray(response.data)) {
         setPresets(response.data);
@@ -276,6 +283,13 @@ export default function PresetBlock({ searchTerm }) {
     }
   };
 
+  // Função para abrir modal de edição
+  const handleUpdatePreset = (preset, event) => {
+    event.stopPropagation(); // Impede o clique no card
+    setSelectedPreset(preset);
+    setIsUpdateModalOpen(true);
+  };
+
   // Função para abrir modal de exclusão
   const handleDeletePreset = (preset, event) => {
     event.stopPropagation(); // Impede o clique no card
@@ -303,11 +317,19 @@ export default function PresetBlock({ searchTerm }) {
     }
   };
 
-  // Função para fechar modais
-  // const handleCloseEditModal = () => {
-  //   setIsEditModalOpen(false);
-  //   setSelectedPreset(null);
-  // };
+  const handlePresetCreated = () => {
+    loadPresets();
+  };
+
+  // Funções para fechar os modais
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedPreset(null);
+  };
 
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
@@ -345,22 +367,39 @@ export default function PresetBlock({ searchTerm }) {
               </div>
               <CardInfo>Fases: {preset.totalPhases}</CardInfo>
               <PresetActions>
-                {/* <ActionButton
-                                onClick={(e) => handleEditProfile(profile, e)}
-                                title="Editar perfil"
-                              >
-                                <ActionIcon src={editarIcon} alt="Editar" />
-                              </ActionButton> */}
+                <ActionButton
+                  onClick={(e) => handleUpdatePreset(preset, e)}
+                  title="Editar perfil"
+                >
+                  <ActionIcon src={editarIcon} alt="Editar" />
+                </ActionButton>
                 <ActionButton
                   onClick={(e) => handleDeletePreset(preset, e)}
                   title="Excluir preset"
                 >
                   <ActionIcon src={lixeiraIcon} alt="Excluir" />
+                  {/* <ActionIcon src={olhoIcon} alt="Visualizar" /> */}
                 </ActionButton>
               </PresetActions>
             </PresetCard>
           ))}
         </CarouselWrapper>
+
+        {isModalOpen && (
+          <GamesForm
+            onClose={handleCloseModal}
+            onProfileCreated={handlePresetCreated}
+            presetToEdit={selectedPreset}
+          />
+        )}
+
+        {isUpdateModalOpen && selectedPreset && (
+          <GamesForm
+            onClose={handleCloseUpdateModal}
+            onGameCreated={handlePresetCreated}
+            presetToEdit={selectedPreset} // Passa o preset para edição
+          />
+        )}
 
         {isDeleteModalOpen && selectedPreset && (
           <DeleteModal onClick={handleCloseDeleteModal}>

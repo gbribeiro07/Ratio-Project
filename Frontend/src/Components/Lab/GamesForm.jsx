@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import {
   createGame,
+  updatePreset,
   assignGameToProfiles,
 } from "../../Services/Games/GameContent.Api";
 import { getProfile } from "../../Services/Profile.Api";
@@ -235,20 +236,49 @@ const initialPhaseState = {
   ],
 };
 
-export default function GamesForm({ onClose, onGameCreated }) {
-  const [nameGame, setNameGame] = useState("Lógica");
-  const [totalPhases, setTotalPhases] = useState(5);
+export default function GamesForm({ onClose, onGameCreated, presetToEdit }) {
+  const [nameGame, setNameGame] = useState(presetToEdit?.nameGame || "Lógica");
+  const [totalPhases, setTotalPhases] = useState(
+    presetToEdit?.totalPhases || 5
+  );
+
   const [phases, setPhases] = useState([initialPhaseState]);
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const [saveAsPreset, setSaveAsPreset] = useState(true);
-  const [namePreset, setNamePreset] = useState("");
+  const [namePreset, setNamePreset] = useState(presetToEdit?.namePreset || "");
   const [sendToProfiles, setSendToProfiles] = useState(false);
   const [profiles, setProfiles] = useState([]);
   const [selectedProfiles, setSelectedProfiles] = useState([]);
   const [profilesLoading, setProfilesLoading] = useState(false);
   const [createdGameId, setCreatedGameId] = useState(null);
+
+  useEffect(() => {
+    if (presetToEdit?.GamePhases) {
+      console.log(
+        "🔄 Convertendo estrutura do backend:",
+        presetToEdit.GamePhases
+      );
+
+      const convertedPhases = presetToEdit.GamePhases.map((phase) => ({
+        phaseNumber: phase.phaseNumber,
+        requiredCorrectAnswers: phase.requiredCorrectAnswers,
+        questions: phase.GameQuestions?.map((question) => ({
+          questionText: question.questionText,
+          answers: question.GameAnswers?.map((answer) => ({
+            modelAnswer: answer.modelAnswer,
+          })) || [{ modelAnswer: "" }],
+        })) || [{ questionText: "", answers: [{ modelAnswer: "" }] }],
+      }));
+
+      console.log("✅ Phases convertidas:", convertedPhases);
+      setPhases(convertedPhases);
+    } else if (presetToEdit?.phases) {
+      // Fallback para estrutura antiga (se ainda existir)
+      setPhases(presetToEdit.phases);
+    }
+  }, [presetToEdit]);
 
   useEffect(() => {
     if (sendToProfiles && profiles.length === 0) {
@@ -269,6 +299,22 @@ export default function GamesForm({ onClose, onGameCreated }) {
       fetchProfiles();
     }
   }, [sendToProfiles, profiles.length]);
+
+  useEffect(() => {
+    console.log("🔍 presetToEdit:", presetToEdit);
+    if (presetToEdit?.phases) {
+      console.log("🎯 ESTRUTURA COMPLETA DO BACKEND:");
+      console.log("GamePhases:", presetToEdit.GamePhases);
+      console.log(
+        "Primeira Phase - GameQuestions:",
+        presetToEdit.GamePhases[0]?.GameQuestions
+      );
+      console.log(
+        "Primeira Question - GameAnswers:",
+        presetToEdit.GamePhases[0]?.GameQuestions[0]?.GameAnswers
+      );
+    }
+  }, [presetToEdit]);
 
   const handlePhaseChange = (index, field, value) => {
     const newPhases = [...phases];
@@ -332,10 +378,10 @@ export default function GamesForm({ onClose, onGameCreated }) {
 
   const resetForm = () => {
     const initialPhaseStructure = {
-      requiredCorrectAnswers: 1, // Assumindo valor padrão
-      questions: [{ questionText: "", answers: [{ modelAnswer: "" }] }], // Estrutura correta
+      requiredCorrectAnswers: 1,
+      questions: [{ questionText: "", answers: [{ modelAnswer: "" }] }],
     };
-    // Zera todos os estados que controlam os campos de entrada e a lógica de envio
+
     setNameGame("Lógica");
     setTotalPhases(5);
     setPhases([initialPhaseStructure]);
@@ -344,12 +390,15 @@ export default function GamesForm({ onClose, onGameCreated }) {
     setCreatedGameId(null);
     setIsLoading(false);
     setMessage(null);
+    setSaveAsPreset(true);
+    setSendToProfiles(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage(null);
 
+    // Validações básicas
     if (!namePreset.trim() && saveAsPreset) {
       setMessage({
         text: "O nome do Preset é obrigatório para salvar!",
@@ -357,6 +406,13 @@ export default function GamesForm({ onClose, onGameCreated }) {
       });
       return;
     }
+
+    const finalNamePreset =
+      namePreset.trim() ||
+      (presetToEdit
+        ? presetToEdit.namePreset
+        : `Jogo ${nameGame} - ${new Date().toLocaleString()}`);
+
     if (!saveAsPreset && !sendToProfiles) {
       setMessage({
         text: "O jogo deve ser salvo como Preset ou enviado a perfis.",
@@ -365,12 +421,14 @@ export default function GamesForm({ onClose, onGameCreated }) {
       return;
     }
 
+    // Validação das fases
     const phaseErrors = phases.some((p) =>
       p.questions.some(
         (q) =>
           !q.questionText.trim() || q.answers.some((a) => !a.modelAnswer.trim())
       )
     );
+
     if (phaseErrors) {
       setMessage({
         text: "Preencha todas as perguntas e respostas modelo.",
@@ -381,12 +439,11 @@ export default function GamesForm({ onClose, onGameCreated }) {
 
     setIsLoading(true);
 
+    // Prepara os dados do jogo
     const gameData = {
       nameGame,
       totalPhases: parseInt(totalPhases, 10),
-      namePreset:
-        namePreset.trim() ||
-        `Jogo ${nameGame} - ${new Date().toLocaleString()}`,
+      namePreset: finalNamePreset,
       phases: phases.map((p, index) => ({
         phaseNumber: index + 1,
         requiredCorrectAnswers: p.requiredCorrectAnswers,
@@ -397,28 +454,58 @@ export default function GamesForm({ onClose, onGameCreated }) {
       })),
     };
 
+    console.log("📤 Dados sendo enviados para updatePreset:");
+    console.log("ID do Jogo:", presetToEdit.idGame);
+    console.log("GameData:", JSON.stringify(gameData, null, 2));
+
     try {
-      const response = await createGame(gameData);
+      let response;
 
-      if (response.success) {
-        setMessage({
-          text: "Preset criado com sucesso! Agora você pode enviá-lo.",
-          error: false,
-        });
-        setCreatedGameId(response.data.idGame);
+      if (presetToEdit) {
+        // 🔄 MODO EDIÇÃO - Usa updatePreset
+        response = await updatePreset(presetToEdit.idGame, gameData);
 
-        if (!sendToProfiles) {
-          onGameCreated();
-          resetForm();
+        if (response.success) {
+          setMessage({
+            text: "Preset atualizado com sucesso!",
+            error: false,
+          });
+          onGameCreated(); // Recarrega a lista de presets
           setTimeout(onClose, 1500);
+        } else {
+          setMessage({
+            text: response.message || "Erro ao atualizar preset.",
+            error: true,
+          });
         }
       } else {
-        setMessage({
-          text: response.message || "Erro ao criar jogo.",
-          error: true,
-        });
+        // ➕ MODO CRIAÇÃO - Usa createGame
+        response = await createGame(gameData);
+
+        if (response.success) {
+          setMessage({
+            text: "Preset criado com sucesso! Agora você pode enviá-lo.",
+            error: false,
+          });
+          setCreatedGameId(response.data.idGame);
+
+          if (!sendToProfiles) {
+            onGameCreated();
+            resetForm();
+            setTimeout(onClose, 1500);
+          }
+        } else {
+          setMessage({
+            text: response.message || "Erro ao criar jogo.",
+            error: true,
+          });
+        }
       }
     } catch (error) {
+      console.error(
+        `Erro ao ${presetToEdit ? "atualizar" : "criar"} preset:`,
+        error
+      );
       setMessage({
         text: error.message || "Não foi possível conectar ao servidor.",
         error: true,
@@ -486,7 +573,9 @@ export default function GamesForm({ onClose, onGameCreated }) {
           ×
         </CloseButton>
 
-        <Title>Criar Novo Jogo (Preset)</Title>
+        <Title>
+          {presetToEdit ? "Editar Preset" : "Criar Novo Jogo (Preset)"}
+        </Title>
 
         <SectionTitle>Configuração Básica</SectionTitle>
         <Label htmlFor="gameType">Tipo de Jogo</Label>
@@ -716,6 +805,8 @@ export default function GamesForm({ onClose, onGameCreated }) {
           >
             {isLoading
               ? "Processando..."
+              : presetToEdit
+              ? "Salvar Atualização"
               : saveAsPreset
               ? "Criar e Salvar Preset"
               : "Criar Jogo Temporário"}
@@ -729,4 +820,51 @@ export default function GamesForm({ onClose, onGameCreated }) {
 GamesForm.propTypes = {
   onClose: PropTypes.func.isRequired,
   onGameCreated: PropTypes.func.isRequired,
+  presetToEdit: PropTypes.shape({
+    idGame: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    namePreset: PropTypes.string,
+    nameGame: PropTypes.string,
+    totalPhases: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    // ESTRUTURA ANTIGA (para compatibilidade)
+    phases: PropTypes.arrayOf(
+      PropTypes.shape({
+        phaseNumber: PropTypes.number,
+        requiredCorrectAnswers: PropTypes.number,
+        questions: PropTypes.arrayOf(
+          PropTypes.shape({
+            questionText: PropTypes.string,
+            answers: PropTypes.arrayOf(
+              PropTypes.shape({
+                modelAnswer: PropTypes.string,
+              })
+            ),
+          })
+        ),
+      })
+    ),
+
+    GamePhases: PropTypes.arrayOf(
+      PropTypes.shape({
+        idPhase: PropTypes.number,
+        phaseNumber: PropTypes.number,
+        requiredCorrectAnswers: PropTypes.number,
+        GameQuestions: PropTypes.arrayOf(
+          PropTypes.shape({
+            idGameQuestion: PropTypes.number,
+            questionText: PropTypes.string,
+            GameAnswers: PropTypes.arrayOf(
+              PropTypes.shape({
+                idGameAnswer: PropTypes.number,
+                modelAnswer: PropTypes.string,
+              })
+            ),
+          })
+        ),
+      })
+    ),
+  }),
+};
+
+GamesForm.defaultProps = {
+  presetToEdit: null,
 };

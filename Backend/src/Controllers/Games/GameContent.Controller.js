@@ -97,19 +97,34 @@ const GameContentController = {
 
   async UpdatePreset(req, res) {
     const idGame = req.params.idGame;
-    const idUser = req.user.idUser;
+    const idUser = req.user.id;
     const updates = req.body;
 
+    // ✅ DEBUG: Verifique o que está vindo
+    console.log("🔄 UpdatePreset - Dados recebidos:", updates);
+
+    const transaction = await sequelize.transaction(); // Inicia uma transação
+
     try {
-      const [rowsAffected] = await Games.update(updates, {
-        where: {
-          idGame: idGame,
-          idUser: idUser, // Garante que apenas o criador possa editar
-          isPreset: true, // Garante que só Presets possam ser atualizados por esta rota
+      // 1. Atualiza os dados básicos do jogo
+      const [rowsAffected] = await Games.update(
+        {
+          nameGame: updates.nameGame,
+          totalPhases: updates.totalPhases,
+          namePreset: updates.namePreset,
         },
-      });
+        {
+          where: {
+            idGame: idGame,
+            idUser: idUser,
+            isPreset: true,
+          },
+          transaction,
+        }
+      );
 
       if (rowsAffected === 0) {
+        await transaction.rollback();
         return res.status(404).json({
           success: false,
           message:
@@ -117,13 +132,89 @@ const GameContentController = {
         });
       }
 
-      // Nota: Atualização de Fases/Questões/Respostas exigiria lógica mais complexa (transação de deleção/criação)
+      // 2. Se vierem phases, atualiza o conteúdo completo
+      if (updates.phases && Array.isArray(updates.phases)) {
+        console.log("📝 Atualizando phases...");
+
+        // 🔄 Estratégia: Deleta tudo e recria (mais simples)
+
+        // a) Encontra todas as phases existentes
+        const existingPhases = await GamePhases.findAll({
+          where: { idGame: idGame },
+          include: [
+            {
+              model: GameQuestions,
+              include: [GameAnswers],
+            },
+          ],
+          transaction,
+        });
+
+        // b) Deleta em cascata (respostas → questions → phases)
+        for (const phase of existingPhases) {
+          for (const question of phase.GameQuestions) {
+            await GameAnswers.destroy({
+              where: { idGameQuestion: question.idGameQuestion },
+              transaction,
+            });
+          }
+          await GameQuestions.destroy({
+            where: { idPhase: phase.idPhase },
+            transaction,
+          });
+        }
+        await GamePhases.destroy({
+          where: { idGame: idGame },
+          transaction,
+        });
+
+        // c) Cria as novas phases, questions e answers
+        for (const phaseData of updates.phases) {
+          const newPhase = await GamePhases.create(
+            {
+              idGame: idGame,
+              phaseNumber: phaseData.phaseNumber,
+              requiredCorrectAnswers: phaseData.requiredCorrectAnswers,
+            },
+            { transaction }
+          );
+
+          for (const questionData of phaseData.questions) {
+            const newQuestion = await GameQuestions.create(
+              {
+                idPhase: newPhase.idPhase,
+                questionText: questionData.questionText,
+              },
+              { transaction }
+            );
+
+            for (const answerData of questionData.answers) {
+              await GameAnswers.create(
+                {
+                  idGameQuestion: newQuestion.idGameQuestion,
+                  modelAnswer: answerData.modelAnswer,
+                },
+                { transaction }
+              );
+            }
+          }
+        }
+
+        console.log("✅ Fases, perguntas e respostas atualizadas com sucesso");
+      }
+
+      // 3. Confirma a transação
+      await transaction.commit();
 
       return res.status(200).json({
         success: true,
         message: `Preset ID ${idGame} atualizado com sucesso.`,
       });
     } catch (error) {
+      // 4. Em caso de erro, reverte tudo
+      await transaction.rollback();
+      console.error("❌ Erro no UpdatePreset:", error);
+
       return res.status(500).json({
         success: false,
         message: "Erro ao atualizar Preset.",
@@ -250,6 +341,7 @@ const GameContentController = {
 
   async ListPresets(req, res) {
     const idUser = req.user.id;
+    console.log("🔄 ListPresets chamado para idUser:", idUser);
 
     try {
       const presets = await Games.findAll({
@@ -264,11 +356,53 @@ const GameContentController = {
           "totalPhases",
           "dateCreated",
         ],
-        order: [["dateCreated", "DESC"]],
+        include: [
+          {
+            model: GamePhases,
+            attributes: ["idPhase", "phaseNumber", "requiredCorrectAnswers"],
+            include: [
+              {
+                model: GameQuestions,
+                attributes: ["idGameQuestion", "questionText"],
+                include: [
+                  {
+                    model: GameAnswers,
+                    attributes: ["idGameAnswer", "modelAnswer"],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        order: [
+          ["dateCreated", "DESC"],
+          [GamePhases, "phaseNumber", "ASC"],
+          [GamePhases, GameQuestions, "idGameQuestion", "ASC"],
+        ],
+      });
+
+      console.log("📦 Presets encontrados:", presets.length);
+      presets.forEach((preset, index) => {
+        console.log(
+          `🎯 Preset ${index + 1}:`,
+          preset.idGame,
+          preset.namePreset
+        );
+        console.log(`   GamePhases:`, preset.GamePhases?.length || 0);
+        if (preset.GamePhases && preset.GamePhases.length > 0) {
+          preset.GamePhases.forEach((phase) => {
+            console.log(
+              `   Phase ${phase.phaseNumber}:`,
+              phase.GameQuestions?.length || 0,
+              "questions"
+            );
+          });
+        }
       });
 
       return res.status(200).json({ success: true, data: presets });
     } catch (error) {
+      console.error("❌ Erro em ListPresets:", error);
       return res.status(500).json({
         success: false,
         message: "Erro ao listar Presets.",
