@@ -7,3 +7,6 @@ router.post("/Cadastro", UserController.Register);
 router.post("/Verificar-Email", UserController.VerifyEmail);
 router.get("/UserBasics", authMiddleware, UserController.getUserBasics);
 module.exports = router;
+router.put("/Editar", authMiddleware, UserController.updateUser);
+router.delete("/Excluir", authMiddleware, UserController.deleteUser);
+router.post("/Logout", authMiddleware, UserController.logout);

@@ -25,6 +25,7 @@ import MateriaisTxt from "./Components/Profiles/Materiais.txt";
 import SairTxt from "./Components/Profiles/Sair.txt";
 import ProfilesPage from "./Components/Profiles/ProfilesPage";
 import MateriaisPage from "./Components/Profiles/MateriaisPage";
+import UserIcon from "./Components/Home/UserIcon";
 
 export default function Presentation() {
   return (
@@ -71,6 +72,7 @@ export function Home() {
         <LabTxt />
         <TeoriaTxt />
         <TutoriaisTxt />
+        <UserIcon />
       </Header>
       <HB1 />
     </>
@@ -87,6 +89,7 @@ export function Lab() {
         <LabTxt />
         <TeoriaTxt />
         <TutoriaisTxt />
+        <UserIcon />
       </Header>
       <LabPage />
     </>
@@ -103,6 +106,7 @@ export function Teoria() {
         <LabTxt />
         <TeoriaTxt />
         <TutoriaisTxt />
+        <UserIcon />
       </Header>
       <TeoriaPage />
     </>
@@ -119,6 +123,7 @@ export function Tutoriais() {
         <LabTxt />
         <TeoriaTxt />
         <TutoriaisTxt />
+        <UserIcon />
       </Header>
       <TutoriaisPage />
     </>

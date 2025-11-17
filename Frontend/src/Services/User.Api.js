@@ -58,3 +58,68 @@ export async function getUser() {
     throw new Error(error.message || "Não foi possível conectar ao servidor");
   }
 }
+
+// Função para editar o usuário
+export async function updateUser(userData) {
+  try {
+    const response = await fetch(`${RATIO_API_URL}/Editar`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Erro ao atualizar perfil");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    throw new Error(error.message || "Não foi possível conectar ao servidor");
+  }
+}
+
+// Função para excluir o usuário
+export async function deleteUser() {
+  try {
+    const response = await fetch(`${RATIO_API_URL}/Excluir`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Erro ao excluir conta");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    throw new Error(error.message || "Não foi possível conectar ao servidor");
+  }
+}
+
+// Função para excluir o usuário
+export async function logoutUser() {
+  try {
+    const response = await fetch(`${RATIO_API_URL}/Logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Erro ao fazer logout");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    throw new Error(error.message || "Não foi possível conectar ao servidor");
+  }
+}

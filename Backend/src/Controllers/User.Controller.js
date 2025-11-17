@@ -134,7 +134,7 @@ const UserController = {
     }
   },
 
-  //Puxa os dados do
+  //Puxa os dados do usuário
   async getUserBasics(req, res) {
     console.log("Buscando usuário com ID:", req.user?.id);
     try {
@@ -158,6 +158,116 @@ const UserController = {
       return res.status(500).json({
         success: false,
         message: "Erro ao buscar dados do usuário!",
+        error: err.message,
+      });
+    }
+  },
+
+  // Edição do usuário
+  async updateUser(req, res) {
+    try {
+      const { nameUser, email, password } = req.body;
+      const userId = req.user.id;
+
+      // Buscar usuário atual
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "Usuário não encontrado!",
+        });
+      }
+
+      // Verificar se o novo email já está em uso por outro usuário
+      if (email && email !== user.email) {
+        const existingUser = await User.findOne({
+          where: { email, isVerified: true },
+        });
+
+        if (existingUser && existingUser.idUser !== userId) {
+          return res.status(400).json({
+            success: false,
+            message: "Este email já está em uso por outro usuário!",
+          });
+        }
+      }
+
+      // Preparar dados para atualização
+      const updateData = {};
+      if (nameUser?.trim()) updateData.nameUser = nameUser.trim();
+      if (email?.trim()) updateData.email = email.trim();
+
+      // Se houver nova senha, criptografar
+      if (password?.trim()) {
+        updateData.password = await bcrypt.hash(password.trim(), 10);
+      }
+
+      // Atualizar usuário
+      await User.update(updateData, {
+        where: { idUser: userId },
+      });
+
+      // Buscar usuário atualizado (sem a senha)
+      const updatedUser = await User.findByPk(userId, {
+        attributes: ["idUser", "nameUser", "email"],
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Perfil atualizado com sucesso!",
+        data: updatedUser,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao atualizar perfil!",
+        error: err.message,
+      });
+    }
+  },
+
+  // Exclusão do usuário
+  async deleteUser(req, res) {
+    try {
+      const userId = req.user.id;
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "Usuário não encontrado!",
+        });
+      }
+
+      // Excluir usuário
+      await User.destroy({
+        where: { idUser: userId },
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Conta excluída com sucesso!",
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao excluir conta!",
+        error: err.message,
+      });
+    }
+  },
+
+  // Logout do usuário
+  async logout(req, res) {
+    try {
+      return res.status(200).json({
+        success: true,
+        message: "Logout realizado com sucesso!",
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao fazer logout!",
         error: err.message,
       });
     }
