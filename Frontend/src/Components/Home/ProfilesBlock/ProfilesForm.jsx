@@ -152,8 +152,6 @@ const Message = styled.p`
   font-size: 14px;
 `;
 
-// --- Componente Modal ---
-
 export default function ProfilesForm({
   onClose,
   onProfileCreated,
@@ -334,13 +332,12 @@ export default function ProfilesForm({
 
   return (
     <ModalFundo onClick={onClose}>
-      {/* O onClick={e => e.stopPropagation()} impede que o clique no modal feche ele */}
       <ModalConteudo
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
       >
         <CloseButton onClick={onClose} type="button">
-          X
+          x
         </CloseButton>
 
         <Title>{modalTitle}</Title>
@@ -391,9 +388,9 @@ export default function ProfilesForm({
             style={{
               padding: "10px 20px",
               backgroundColor: "transparent",
-              border: "2px dashed #6c00ff",
+              border: "2px dashed blueviolet",
               borderRadius: "8px",
-              color: "#6c00ff",
+              color: "blueviolet",
               cursor: "pointer",
               fontSize: "14px",
               transition: "all 0.3s",
@@ -409,7 +406,7 @@ export default function ProfilesForm({
                 height: "100px",
                 borderRadius: "50%",
                 overflow: "hidden",
-                border: "2px solid #6c00ff",
+                border: "2px solid blueviolet",
                 marginTop: "10px",
                 position: "relative",
               }}

@@ -44,6 +44,7 @@ const ModalConteudo = styled.form`
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   animation: ${slideDown} 0.5s ease-out;
+  position: relative;
 `;
 
 const Title = styled.h2`
@@ -119,8 +120,8 @@ const SubmitButton = styled.button`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: transparent;
   border: none;
   color: #ccc;
@@ -129,7 +130,7 @@ const CloseButton = styled.button`
   transition: color 0.2s;
 
   &:hover {
-    color: #f0f0f0;
+    color: #ff0000;
   }
 `;
 
@@ -329,6 +330,22 @@ export default function GamesForm({ onClose, onGameCreated }) {
     );
   };
 
+  const resetForm = () => {
+    const initialPhaseStructure = {
+      requiredCorrectAnswers: 1, // Assumindo valor padrão
+      questions: [{ questionText: "", answers: [{ modelAnswer: "" }] }], // Estrutura correta
+    };
+    // Zera todos os estados que controlam os campos de entrada e a lógica de envio
+    setNameGame("Lógica");
+    setTotalPhases(5);
+    setPhases([initialPhaseStructure]);
+    setNamePreset("");
+    setSelectedProfiles([]);
+    setCreatedGameId(null);
+    setIsLoading(false);
+    setMessage(null);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage(null);
@@ -392,6 +409,7 @@ export default function GamesForm({ onClose, onGameCreated }) {
 
         if (!sendToProfiles) {
           onGameCreated();
+          resetForm();
           setTimeout(onClose, 1500);
         }
       } else {
@@ -440,6 +458,7 @@ export default function GamesForm({ onClose, onGameCreated }) {
           error: false,
         });
         onGameCreated();
+        resetForm();
         setTimeout(onClose, 1500);
       } else {
         setMessage({
@@ -493,7 +512,7 @@ export default function GamesForm({ onClose, onGameCreated }) {
 
         <SectionTitle>Conteúdo do Jogo</SectionTitle>
 
-        {phases.map((phase, phaseIndex) => (
+        {phases?.map((phase, phaseIndex) => (
           <PhaseContainer key={phaseIndex}>
             <FlexRow style={{ justifyContent: "space-between" }}>
               <SectionTitle style={{ marginTop: "0", border: "none" }}>
@@ -529,7 +548,7 @@ export default function GamesForm({ onClose, onGameCreated }) {
             <Label style={{ marginTop: "15px" }}>
               Perguntas e Respostas Modelo
             </Label>
-            {phase.questions.map((question, questionIndex) => (
+            {phase.questions?.map((question, questionIndex) => (
               <div
                 key={questionIndex}
                 style={{
@@ -664,13 +683,13 @@ export default function GamesForm({ onClose, onGameCreated }) {
               {!profilesLoading && profiles.length === 0 && (
                 <p>Nenhum perfil encontrado.</p>
               )}
-              {profiles.map((profile) => (
+              {profiles?.map((profile) => (
                 <ProfileItem key={profile.nameProfile}>
                   <span>{`${profile.nameProfile}`}</span>
                   <input
                     type="checkbox"
-                    checked={selectedProfiles.includes(profile.nameProfile)}
-                    onChange={() => handleProfileSelect(profile.nameProfile)}
+                    checked={selectedProfiles.includes(profile.idProfile)}
+                    onChange={() => handleProfileSelect(profile.idProfile)}
                   />
                 </ProfileItem>
               ))}

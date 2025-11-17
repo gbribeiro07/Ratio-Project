@@ -209,7 +209,7 @@ export default function HB1() {
       <RightBlock>
         <RankingWrapper>
           <h1>
-            <span>Ranking</span> de desempenho
+            <span>Ranking</span> de desempenho (Exemplo)
           </h1>
           <h2>(TOP 10)</h2>
           <ol>
