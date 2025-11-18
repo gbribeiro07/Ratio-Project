@@ -407,11 +407,11 @@ export default function GamesForm({ onClose, onGameCreated, presetToEdit }) {
       return;
     }
 
-    const finalNamePreset =
-      namePreset.trim() ||
-      (presetToEdit
-        ? presetToEdit.namePreset
-        : `Jogo ${nameGame} - ${new Date().toLocaleString()}`);
+    // const finalNamePreset =
+    //   namePreset.trim() ||
+    //   (presetToEdit
+    //     ? presetToEdit.namePreset
+    //     : `Jogo ${nameGame} - ${new Date().toLocaleString()}`);
 
     if (!saveAsPreset && !sendToProfiles) {
       setMessage({
@@ -443,7 +443,9 @@ export default function GamesForm({ onClose, onGameCreated, presetToEdit }) {
     const gameData = {
       nameGame,
       totalPhases: parseInt(totalPhases, 10),
-      namePreset: finalNamePreset,
+      namePreset:
+        namePreset.trim() ||
+        `Jogo ${nameGame} - ${new Date().toLocaleString()}`,
       phases: phases.map((p, index) => ({
         phaseNumber: index + 1,
         requiredCorrectAnswers: p.requiredCorrectAnswers,
@@ -454,9 +456,9 @@ export default function GamesForm({ onClose, onGameCreated, presetToEdit }) {
       })),
     };
 
-    console.log("📤 Dados sendo enviados para updatePreset:");
-    console.log("ID do Jogo:", presetToEdit.idGame);
-    console.log("GameData:", JSON.stringify(gameData, null, 2));
+    // console.log("📤 Dados sendo enviados para updatePreset:");
+    // console.log("ID do Jogo:", presetToEdit.idGame);
+    // console.log("GameData:", JSON.stringify(gameData, null, 2));
 
     try {
       let response;
